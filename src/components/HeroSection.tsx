@@ -26,7 +26,7 @@ const HeroSection = () => {
             transition={{ duration: 0.6 }}
             className="flex items-center gap-4 mb-6"
           >
-            <img src={logo} alt="Logo" className="h-20 w-20 md:h-24 md:w-24 rounded-full shadow-2xl border-2 border-primary-foreground/30" />
+            {/* <img src={logo} alt="Logo" className="h-20 w-20 md:h-24 md:w-24 rounded-full shadow-2xl border-2 border-primary-foreground/30" /> */}
           </motion.div>
 
           <motion.h1
