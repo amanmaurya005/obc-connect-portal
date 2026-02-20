@@ -590,7 +590,7 @@ export const AdvancedSlider: React.FC<AdvancedSliderProps> = ({
                   scale: 1.03,
                   transition: { duration: 0.3, ease: "easeOut" },
                 }}
-                className="flex-none w-full sm:w-[calc(50%-8px)] md:w-[calc(50%-8px)] [scroll-snap-align:start] rounded-2xl overflow-hidden relative shadow-[0_8px_32px_rgba(0,0,0,0.13)] transition-all duration-[350ms] ease-in-out group hover:shadow-[0_20px_56px_rgba(0,0,0,0.22)] bg-white flex items-center justify-center aspect-[3/4]"
+                className="flex-none w-full sm:w-[calc(50%-8px)] md:w-[calc(50%-8px)] [scroll-snap-align:start] rounded-2xl overflow-hidden relative shadow-[0_8px_32px_rgba(0,0,0,0.13)] transition-all duration-[350ms] ease-in-out group hover:shadow-[0_20px_56px_rgba(0,0,0,0.22)] h-[320px] bg-white flex items-center justify-center aspect-[3/4]"
               >
                 {/* Slide Number Badge */}
                 <span className="absolute top-3.5 left-3.5 z-10 bg-black/70 text-white text-[11px] font-mono tracking-[0.15em] px-2.5 py-1 rounded-full backdrop-blur-sm">
