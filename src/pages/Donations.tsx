@@ -755,7 +755,7 @@ const Donations = () => {
           {[
             { Icon: ShieldCheck, label: "SSL Secured" },
             { Icon: Trophy, label: "NGO Certified" },
-            { Icon: FileText, label: "80G Tax Benefit" },
+            
           ].map(({ Icon, label }) => (
             <span key={label} className="text-xs text-gray-500 font-medium flex items-center gap-1">
               <Icon size={13} className="text-[#e87722]" />
