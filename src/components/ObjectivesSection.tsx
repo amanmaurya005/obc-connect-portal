@@ -47,7 +47,11 @@ const ObjectivesSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="objectives" className="py-20 bg-cream-pattern" ref={ref}>
+    <section
+    id="objectives"
+    ref={ref}
+    className="py-20 bg-cream-pattern scroll-mt-24"
+  >
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div

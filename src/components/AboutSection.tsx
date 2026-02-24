@@ -31,7 +31,11 @@ const AboutSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="about" className="py-20 bg-background" ref={ref}>
+    <section
+    id="about"
+    ref={ref}
+    className="py-20 bg-background scroll-mt-24"
+  >
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div

@@ -139,3 +139,7 @@
     border-image: linear-gradient(90deg, hsl(var(--saffron)) 0%, hsl(var(--saffron)) 33%, hsl(0 0% 100%) 33%, hsl(0 0% 100%) 66%, hsl(var(--green-india)) 66%, hsl(var(--green-india)) 100%) 1;
   }
 }
+
+html {
+  scroll-behavior: smooth;
+}

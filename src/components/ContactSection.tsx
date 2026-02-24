@@ -7,7 +7,7 @@ const ContactSection = () => {
   const isInView = useInView(ref, { once: true, margin: "-100px" });
 
   return (
-    <section id="contact" className="py-20 bg-background" ref={ref}>
+    <section id="contact" className="py-20 bg-background scroll-mt-24" ref={ref}>
       <div className="container mx-auto px-4">
         {/* Section Header */}
         <motion.div
