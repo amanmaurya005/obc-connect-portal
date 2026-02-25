@@ -53,12 +53,12 @@
 //           <div>
 //             <h4 className="font-heading font-bold text-lg mb-5">संपर्क</h4>
 //             <div className="flex flex-col gap-4">
-//               <a href="tel:9549566300" className="flex items-center gap-3 text-primary-foreground/70 hover:text-gold transition-colors text-sm">
+//               <a href="tel:91+ 9549566300" className="flex items-center gap-3 text-primary-foreground/70 hover:text-gold transition-colors text-sm">
 //                 <Phone className="h-4 w-4 shrink-0" />
-//                 9549566300
+//                 91+ 9549566300
 //               </a>
 //               <a
-//                 href="https://wa.me/919549566300"
+//                 href="https://wa.me/9191+ 9549566300"
 //                 target="_blank"
 //                 rel="noopener noreferrer"
 //                 className="flex items-center gap-3 text-primary-foreground/70 hover:text-gold transition-colors text-sm"
@@ -194,15 +194,15 @@ const Footer = () => {
             <div className="flex flex-col gap-4">
 
               <a
-                href="tel:9549566300"
+                href="tel:91+ 9549566300"
                 className="flex items-center gap-3 text-primary-foreground/70 hover:text-gold transition-colors text-sm"
               >
                 <Phone className="h-4 w-4 shrink-0" />
-                9549566300
+                91+ 9549566300
               </a>
 
               <a
-                href="https://wa.me/919549566300"
+                href="https://wa.me/9191+ 9549566300"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="flex items-center gap-3 text-primary-foreground/70 hover:text-gold transition-colors text-sm"

@@ -14,8 +14,8 @@ const MobileNav = ({ sections }: MobileNavProps) => {
   return (
     <div className="lg:hidden mb-6">
       <Accordion type="single" collapsible>
-        <AccordionItem value="nav" className="border rounded-xl bg-card">
-          <AccordionTrigger className="px-4 py-3 text-sm font-semibold">
+        <AccordionItem value="nav" className="border rounded-xl bg-white">
+          <AccordionTrigger className="px-4 py-3 text-sm font-semibold text-gray-900">
             📑 विषय सूची (Table of Contents)
           </AccordionTrigger>
           <AccordionContent className="px-4 pb-3">
@@ -26,7 +26,7 @@ const MobileNav = ({ sections }: MobileNavProps) => {
                   <a
                     key={section.id}
                     href={`#${section.id}`}
-                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-muted-foreground hover:text-foreground hover:bg-muted transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 rounded-lg text-sm text-gray-600 hover:text-gray-900 hover:bg-gray-100 transition-colors"
                   >
                     <Icon size={14} />
                     {section.title}

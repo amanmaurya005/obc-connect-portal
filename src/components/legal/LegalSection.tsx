@@ -32,32 +32,18 @@ const LegalSection = ({ id, title, icon: Icon, children }: LegalSectionProps) =>
     <section
       id={id}
       ref={ref}
-      className={`
-        bg-white
-        rounded-2xl
-        shadow-md
-        border border-gray-200
-        p-6 md:p-8
-        transition-all duration-700
-        ${visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"}
-      `}
+      className={`bg-card rounded-2xl shadow-lg border border-border p-6 md:p-8 transition-all duration-700 ${
+        visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
+      }`}
     >
 
       <div className="flex items-center gap-3 mb-5">
-
-        <div className="w-10 h-10 rounded-xl bg-blue-100 flex items-center justify-center">
-
-          <Icon size={20} className="text-blue-600" />
-
+        <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
+          <Icon size={20} className="text-primary" />
         </div>
-
-        <h2 className="text-xl md:text-2xl font-bold text-gray-800">
-          {title}
-        </h2>
-
+        <h2 className="font-hindi text-xl md:text-2xl font-bold text-foreground">{title}</h2>
       </div>
-
-      <div className="text-gray-700 space-y-4 leading-relaxed">
+      <div className="prose prose-sm max-w-none text-foreground/85 space-y-4">
         {children}
       </div>
 
