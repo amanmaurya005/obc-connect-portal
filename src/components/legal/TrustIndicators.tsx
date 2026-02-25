@@ -13,13 +13,13 @@ const TrustIndicators = () => {
       {indicators.map((item, i) => (
         <div
           key={i}
-          className="flex flex-col items-center text-center p-4 rounded-xl bg-card border border-border hover:shadow-md transition-shadow"
+          className="flex flex-col items-center text-center p-4 rounded-xl bg-white border border-gray-200 hover:shadow-md transition-shadow"
         >
-          <div className="w-12 h-12 rounded-full bg-green-india-light flex items-center justify-center mb-3">
-            <item.icon size={22} className="text-green-india" />
+          <div className="w-12 h-12 rounded-full bg-green-100 flex items-center justify-center mb-3">
+            <item.icon size={22} className="text-green-600" />
           </div>
-          <p className="font-hindi text-sm font-semibold text-foreground">{item.label}</p>
-          <p className="text-xs text-muted-foreground">{item.sublabel}</p>
+          <p className="font-hindi text-sm font-semibold text-gray-900">{item.label}</p>
+          <p className="text-xs text-gray-600">{item.sublabel}</p>
         </div>
       ))}
     </div>

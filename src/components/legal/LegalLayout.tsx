@@ -44,7 +44,7 @@ const LegalLayout = ({
   }, [sections]);
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white">
       <ScrollProgress />
       <LegalHero titleHindi={titleHindi} titleEnglish={titleEnglish} lastUpdated={lastUpdated} />
 

@@ -8,19 +8,19 @@ interface HighlightBoxProps {
 
 const variants = {
   info: {
-    bg: "bg-accent border-primary/30",
+    bg: "bg-blue-50 border-blue-200",
     icon: Info,
-    iconColor: "text-primary",
+    iconColor: "text-blue-600",
   },
   warning: {
-    bg: "bg-destructive/5 border-destructive/30",
+    bg: "bg-yellow-50 border-yellow-200",
     icon: AlertTriangle,
-    iconColor: "text-destructive",
+    iconColor: "text-yellow-600",
   },
   secure: {
-    bg: "bg-green-india-light border-green-india/30",
+    bg: "bg-green-50 border-green-200",
     icon: ShieldCheck,
-    iconColor: "text-green-india",
+    iconColor: "text-green-600",
   },
 };
 

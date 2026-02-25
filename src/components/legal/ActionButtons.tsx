@@ -1,34 +1,37 @@
 import { Printer, Download } from "lucide-react";
-import { Button } from "@/components/ui/button";
 
 const ActionButtons = () => {
   const handlePrint = () => window.print();
 
   const handleDownload = () => {
-    // Simple approach: trigger print dialog which allows save as PDF
     window.print();
   };
 
   return (
     <div className="flex gap-3">
-      <Button
-        variant="outline"
-        size="sm"
+      <button
         onClick={handlePrint}
-        className="gap-2 text-muted-foreground hover:text-foreground"
+        className="flex items-center gap-2 px-4 py-2 text-sm 
+        border rounded-md 
+        text-gray-600 hover:text-black 
+        hover:bg-gray-100 
+        transition-all duration-200"
       >
         <Printer size={16} />
         <span className="hidden sm:inline">प्रिंट करें</span>
-      </Button>
-      <Button
-        variant="outline"
-        size="sm"
+      </button>
+
+      <button
         onClick={handleDownload}
-        className="gap-2 text-muted-foreground hover:text-foreground"
+        className="flex items-center gap-2 px-4 py-2 text-sm 
+        border rounded-md 
+        text-gray-600 hover:text-black 
+        hover:bg-gray-100 
+        transition-all duration-200"
       >
         <Download size={16} />
         <span className="hidden sm:inline">PDF डाउनलोड</span>
-      </Button>
+      </button>
     </div>
   );
 };
