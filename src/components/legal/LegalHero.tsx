@@ -12,7 +12,7 @@ const LegalHero = ({ titleHindi, titleEnglish, lastUpdated }: LegalHeroProps) =>
       {/* Tricolor bar */}
       <div className="h-1.5 gradient-tricolor-bar" />
 
-      <div className="gradient-saffron-dark chakra-watermark py-16 px-6 text-center">
+      <div className="bg-orange-400 gradient-saffron-dark chakra-watermark py-16 px-6 text-center">
         <div className="max-w-5xl mx-auto">
           <p className="text-primary-foreground/80 text-sm font-medium tracking-widest uppercase mb-3">
             अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
