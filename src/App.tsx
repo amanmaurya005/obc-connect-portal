@@ -13,7 +13,7 @@ import Donations from "./pages/Donations";
 import NotFound from "./pages/NotFound";
 import Discount from "./pages/Discount";
 
-// ✅ Legal imports fix
+// ✅ Legal imports 
 import LegalIndex from "./pages/legaleIndex";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
 import TermsAndConditions from "./pages/legal/TermsAndConditions";
