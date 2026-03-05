@@ -128,6 +128,7 @@ if (lastMember && lastMember.receiptNumber) {
       membershipFee: req.body.membershipFee ? parseInt(req.body.membershipFee) : 200,
       state: req.body.state,
       district: req.body.district,
+      vidhansabha: req.body.vidhansabha,
       image: req.file.path,
     });
 
@@ -171,6 +172,8 @@ if (lastMember && lastMember.receiptNumber) {
 
            <tr><td>State</td><td>${req.body.state || "-"}</td></tr>
            <tr><td>District</td><td>${req.body.district || "-"}</td></tr>
+
+           <tr><td>Vidhansabha</td><td>${req.body.vidhansabha || "-"}</td></tr>
 
            <tr><td>Education</td><td>${req.body.education || "-"}</td></tr>
            <tr><td>Other Education</td><td>${req.body.otherEducation || "-"}</td></tr>
@@ -281,6 +284,8 @@ const userReceipt = {
           <span style="font-weight:normal;">
             ${req.body.district || "-"}
           </span>
+          विधानसभा :
+<span>${req.body.vidhansabha || "-"}</span>
           <span style="float:right;">
             राज्य :
             <span style="font-weight:normal;">

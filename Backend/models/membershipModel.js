@@ -62,6 +62,11 @@ const membershipSchema = new mongoose.Schema({
   state: { type: String, required: [true, "State is required"] },
   district: { type: String, required: [true, "District is required"] },
 
+  vidhansabha: {
+    type: String,
+    required: [true, "Vidhansabha is required"]
+  },
+
   // ✅ Cloudinary URL save होगा
   image: {
     type: String,

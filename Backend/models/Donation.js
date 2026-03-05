@@ -10,7 +10,7 @@ const donationSchema = new mongoose.Schema(
     cause: {
       type: String,
       required: true,
-      enum: ["general", "education", "health", "support"],
+      enum: ["general", "education", "health", "support", "legal"],
     },
 
     name: {
