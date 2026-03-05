@@ -5,7 +5,7 @@ import { createMembership, createOrder, getAllMemberships, getSingleMembership }
 const router = express.Router();
 
 router.post("/register", uploadCloud.single("imageFile"), createMembership);
-router.get("/", getAllMemberships);           // Get all
+router.get("/", getAllMemberships);          
 router.get("/:id", getSingleMembership);  
 
 router.post("/create-order", createOrder);
