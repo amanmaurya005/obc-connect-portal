@@ -9,16 +9,23 @@ interface LegalSectionProps {
 }
 
 const LegalSection = ({ id, title, icon: Icon, children }: LegalSectionProps) => {
+
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
 
   useEffect(() => {
+
     const observer = new IntersectionObserver(
-      ([entry]) => { if (entry.isIntersecting) setVisible(true); },
+      ([entry]) => {
+        if (entry.isIntersecting) setVisible(true);
+      },
       { threshold: 0.1 }
     );
+
     if (ref.current) observer.observe(ref.current);
+
     return () => observer.disconnect();
+
   }, []);
 
   return (
@@ -29,8 +36,9 @@ const LegalSection = ({ id, title, icon: Icon, children }: LegalSectionProps) =>
         visible ? "opacity-100 translate-y-0" : "opacity-0 translate-y-5"
       }`}
     >
+
       <div className="flex items-center gap-3 mb-5">
-        <div className="w-10 h-10 rounded-xl bg-accent flex items-center justify-center">
+        <div className="w-10 h-10 rounded-xl bg-gray-100 flex items-center justify-center border border-gray-300">
           <Icon size={20} className="text-primary" />
         </div>
         <h2 className="font-hindi text-xl md:text-2xl font-bold text-foreground">{title}</h2>
@@ -38,6 +46,7 @@ const LegalSection = ({ id, title, icon: Icon, children }: LegalSectionProps) =>
       <div className="prose prose-sm max-w-none text-foreground/85 space-y-4">
         {children}
       </div>
+
     </section>
   );
 };

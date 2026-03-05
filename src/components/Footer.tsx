@@ -53,12 +53,12 @@
 //           <div>
 //             <h4 className="font-heading font-bold text-lg mb-5">संपर्क</h4>
 //             <div className="flex flex-col gap-4">
-//               <a href="tel:9549566300" className="flex items-center gap-3 text-primary-foreground/70 hover:text-gold transition-colors text-sm">
+//               <a href="tel:91+ 9549566300" className="flex items-center gap-3 text-primary-foreground/70 hover:text-gold transition-colors text-sm">
 //                 <Phone className="h-4 w-4 shrink-0" />
-//                 9549566300
+//                 91+ 9549566300
 //               </a>
 //               <a
-//                 href="https://wa.me/919549566300"
+//                 href="https://wa.me/9191+ 9549566300"
 //                 target="_blank"
 //                 rel="noopener noreferrer"
 //                 className="flex items-center gap-3 text-primary-foreground/70 hover:text-gold transition-colors text-sm"
@@ -98,8 +98,6 @@
 
 
 
-
-
 import logo from "@/assets/logo.png";
 import { Phone, MapPin, MessageCircle } from "lucide-react";
 import { Link } from "react-router-dom";
@@ -107,6 +105,7 @@ import { Link } from "react-router-dom";
 const Footer = () => {
   return (
     <footer className="bg-foreground text-primary-foreground">
+
       {/* Tricolor strip */}
       <div className="flex h-1.5">
         <div className="flex-1 bg-gradient-saffron" />
@@ -115,12 +114,17 @@ const Footer = () => {
       </div>
 
       <div className="container mx-auto px-4 py-12">
+
         <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
 
           {/* Brand */}
           <div>
             <div className="flex items-center gap-3 mb-5">
-              <img src={logo} alt="Logo" className="h-14 w-14 rounded-full" />
+              <img
+                src={logo}
+                alt="Logo"
+                className="h-14 w-14 rounded-full"
+              />
               <div>
                 <h3 className="font-heading font-bold text-lg">
                   अखिल भारतीय सयुंक्त
@@ -136,6 +140,7 @@ const Footer = () => {
             </p>
           </div>
 
+
           {/* Quick Links */}
           <div>
             <h4 className="font-heading font-bold text-lg mb-5">
@@ -145,11 +150,11 @@ const Footer = () => {
             <nav className="flex flex-col gap-3">
 
               {[
-                { label: "होम", href: "#home" },
-                { label: "हमारे बारे में", href: "#about" },
-                { label: "उद्देश्य", href: "#objectives" },
-                { label: "नेतृत्व", href: "#leadership" },
-                { label: "संपर्क", href: "#contact" },
+                { label: "होम", href: "/#home" },
+                { label: "हमारे बारे में", href: "/#about" },
+                { label: "उद्देश्य", href: "/#objectives" },
+                { label: "नेतृत्व", href: "/#leadership" },
+                { label: "संपर्क", href: "/#contact" },
               ].map((link) => (
                 <a
                   key={link.href}
@@ -159,31 +164,9 @@ const Footer = () => {
                   {link.label}
                 </a>
               ))}
-
-              {/* ✅ Razorpay Required Legal Links */}
-              <Link
-                to="/privacy-policy"
-                className="text-primary-foreground/70 hover:text-gold transition-colors text-sm"
-              >
-                Privacy Policy
-              </Link>
-
-              <Link
-                to="/terms-conditions"
-                className="text-primary-foreground/70 hover:text-gold transition-colors text-sm"
-              >
-                Terms & Conditions
-              </Link>
-
-              <Link
-                to="/refund-policy"
-                className="text-primary-foreground/70 hover:text-gold transition-colors text-sm"
-              >
-                Refund Policy
-              </Link>
-
             </nav>
           </div>
+
 
           {/* Contact */}
           <div>
@@ -194,11 +177,11 @@ const Footer = () => {
             <div className="flex flex-col gap-4">
 
               <a
-                href="tel:9549566300"
+                href="tel:+919549566300"
                 className="flex items-center gap-3 text-primary-foreground/70 hover:text-gold transition-colors text-sm"
               >
                 <Phone className="h-4 w-4 shrink-0" />
-                9549566300
+                +91 9549566300
               </a>
 
               <a
@@ -225,45 +208,66 @@ const Footer = () => {
 
         </div>
 
-        {/* Bottom Bar */}
-        <div className="mt-10 pt-6 border-t border-primary-foreground/10 text-center">
 
-          <p className="text-primary-foreground/50 text-sm">
-            © {new Date().getFullYear()} अखिल भारतीय सयुंक्त ओ.बी.सी. महासभा।
-            सर्वाधिकार सुरक्षित।
-          </p>
+        {/* Bottom Section */}
+        <div className="mt-10 pt-6 border-t border-primary-foreground/10">
 
-          {/* ✅ Legal Links Bottom */}
-          <div className="flex justify-center gap-4 mt-3 flex-wrap text-xs">
+          {/* Copyright Row */}
+          <div className="text-center">
+            <p className="text-primary-foreground/50 text-sm">
+              © {new Date().getFullYear()} अखिल भारतीय सयुंक्त ओ.बी.सी. महासभा।
+              सर्वाधिकार सुरक्षित।
+            </p>
+          </div>
+
+
+          {/* ✅ Separate Legal Links Row */}
+          <div className="flex justify-center gap-6 mt-4 flex-wrap text-sm border-t border-primary-foreground/10 pt-4">
+
+            
+          <Link
+              to="/legal"
+              className="text-primary-foreground/40 hover:text-gold"
+            >
+              Disclaimer
+            </Link>
 
             <Link
-              to="/privacy-policy"
+              to="legal/privacy-policy"
               className="text-primary-foreground/40 hover:text-gold"
             >
               Privacy Policy
             </Link>
 
             <Link
-              to="/terms-conditions"
+              to="legal/terms-and-conditions"
               className="text-primary-foreground/40 hover:text-gold"
             >
               Terms & Conditions
             </Link>
 
             <Link
-              to="/refund-policy"
+              to="/legal/refund-policy"
               className="text-primary-foreground/40 hover:text-gold"
             >
               Refund Policy
             </Link>
 
+          
+
           </div>
 
-          <p className="text-primary-foreground/30 text-xs mt-2 font-heading">
-            एक बनो, नेक रहो • संघर्ष ही जीवन है • संगठन में शक्ति है
-          </p>
+
+          {/* Tagline Row */}
+          <div className="text-center mt-4">
+            <p className="text-primary-foreground/30 text-xs font-heading">
+              एक बनो, नेक रहो • संघर्ष ही जीवन है • संगठन में शक्ति है
+            </p>
+          </div>
 
         </div>
+
+
       </div>
     </footer>
   );

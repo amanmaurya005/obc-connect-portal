@@ -14,8 +14,8 @@ interface LegalSidebarProps {
 
 const LegalSidebar = ({ sections, activeSection }: LegalSidebarProps) => {
   return (
-    <nav className="hidden lg:block sticky top-8 space-y-1">
-      <p className="text-xs font-semibold uppercase tracking-wider text-muted-foreground mb-3 px-3">
+    <nav className="hidden lg:block sticky top-48 space-y-1 ">
+      <p className="text-xs font-semibold uppercase tracking-wider text-gray-600 mb-3 px-3">
         विषय सूची
       </p>
       {sections.map((section) => {
@@ -27,8 +27,8 @@ const LegalSidebar = ({ sections, activeSection }: LegalSidebarProps) => {
             className={cn(
               "flex items-center gap-2.5 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200",
               activeSection === section.id
-                ? "bg-accent text-accent-foreground border-l-3 border-primary"
-                : "text-muted-foreground hover:text-foreground hover:bg-muted"
+                ? "bg-blue-100 text-blue-900 border-l-3 border-blue-600"
+                : "text-gray-600 hover:text-gray-900 hover:bg-gray-100"
             )}
           >
             <Icon size={16} />

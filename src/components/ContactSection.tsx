@@ -30,7 +30,7 @@ const ContactSection = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
           {/* WhatsApp Card */}
           <motion.a
-            href="https://wa.me/919549566300"
+            href="https://wa.me/9191+ 9549566300"
             target="_blank"
             rel="noopener noreferrer"
             initial={{ opacity: 0, y: 30 }}
@@ -42,13 +42,13 @@ const ContactSection = () => {
               <MessageCircle className="h-8 w-8 text-secondary-foreground" />
             </div>
             <h3 className="text-xl font-heading font-bold text-foreground mb-2">WhatsApp</h3>
-            <p className="text-2xl font-bold text-secondary mb-2">9549566300</p>
+            <p className="text-2xl font-bold text-secondary mb-2">91+ 9549566300</p>
             <p className="text-muted-foreground text-sm">तुरंत संपर्क के लिए WhatsApp करें</p>
           </motion.a>
 
           {/* Phone Card */}
           <motion.a
-            href="tel:9549566300"
+            href="tel:91+ 9549566300"
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2 }}
@@ -58,7 +58,7 @@ const ContactSection = () => {
               <Phone className="h-8 w-8 text-primary-foreground" />
             </div>
             <h3 className="text-xl font-heading font-bold text-foreground mb-2">फ़ोन करें</h3>
-            <p className="text-2xl font-bold text-primary mb-2">9549566300</p>
+            <p className="text-2xl font-bold text-primary mb-2">91+ 9549566300</p>
             <p className="text-muted-foreground text-sm">सोमवार से शनिवार, सुबह 10 - शाम 6 बजे</p>
           </motion.a>
 
@@ -93,7 +93,7 @@ const ContactSection = () => {
           className="mt-12 text-center"
         >
           <a
-            href="https://wa.me/919549566300?text=नमस्कार,%20मुझे%20ओ.बी.सी.%20महासभा%20के%20सदस्यता%20के%20बारे%20में%20जानकारी%20चाहिए।"
+            href="https://wa.me/9191+ 9549566300?text=नमस्कार,%20मुझे%20ओ.बी.सी.%20महासभा%20के%20सदस्यता%20के%20बारे%20में%20जानकारी%20चाहिए।"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-3 bg-gradient-green text-secondary-foreground px-10 py-5 rounded-full text-lg font-semibold shadow-xl hover:shadow-2xl transition-all hover:scale-105"

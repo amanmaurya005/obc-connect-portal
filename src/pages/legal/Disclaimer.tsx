@@ -101,7 +101,7 @@ const Disclaimer = () => {
           यदि आपको वेबसाइट पर कोई गलत या भ्रामक जानकारी मिलती है, तो कृपया हमें सूचित करें:
         </p>
         <ul className="list-disc pl-5 space-y-2">
-          <li><strong>ईमेल:</strong> feedback@obcmahasabha.org</li>
+          <li><strong>ईमेल:</strong> info@obcmahasabha.co.in</li>
           <li><strong>विषय:</strong> "सामग्री सुधार अनुरोध"</li>
           <li>हम हर सुझाव की सराहना करते हैं और उचित कार्रवाई करेंगे</li>
         </ul>

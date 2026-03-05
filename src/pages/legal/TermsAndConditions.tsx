@@ -89,7 +89,10 @@ const TermsAndConditions = () => {
       <LegalSection id="governing-law" title="शासी कानून (Governing Law)" icon={Scale}>
         <p>
           ये नियम और शर्तें <strong>भारत के कानूनों</strong> द्वारा शासित हैं। किसी भी विवाद
-          की स्थिति में, <strong>नई दिल्ली, भारत</strong> के न्यायालयों का अनन्य अधिकार
+          की स्थिति में, <strong>प्लॉट नंबर: 115, 116,
+विनायक रेजीडेंसी - I(F3),
+विनायक विहार डी, हरनाथपुरा,
+कलवार रोड, जयपुर - 302012</strong> के न्यायालयों का अनन्य अधिकार
           क्षेत्र होगा।
         </p>
         <HighlightBox variant="info">
