@@ -429,10 +429,10 @@ const galleryData: GalleryItem[] = [
 ];
 
 const stats = [
-  { value: "500+", label: "कार्यक्रम आयोजित" },
-  { value: "10K+", label: "लाभार्थी परिवार" },
-  { value: "50+",  label: "जिले охвачित"      },
-  { value: "15+",  label: "वर्षों का अनुभव"   },
+  { value: "500+", label: "आयोजित कार्यक्रम" },
+  { value: "10,000+", label: "लाभार्थी परिवार" },
+  { value: "50+", label: "जिले कवर किए" },
+  { value: "15+", label: "वर्षों का अनुभव" },
 ];
 
 const filterOptions: { label: string; value: FilterOption }[] = [
@@ -847,7 +847,7 @@ export default function GallerySection() {
         }}
       >
         {/* Top pattern strip */}
-        <div style={patternStrip} />
+       
 
         {/* ── Header ── */}
         <div
@@ -864,30 +864,15 @@ export default function GallerySection() {
         >
           {/* Tagline */}
           <div style={{ display: "inline-flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
-            <span style={{ width: 28, height: 1.5, background: "linear-gradient(90deg,transparent,#FF6B00)" }} />
-            <span style={{ fontSize: "0.75rem", fontWeight: 700, color: "#FF6B00", letterSpacing: "0.18em", textTransform: "uppercase" }}>
-              OBC महासभा
-            </span>
-            <span style={{ width: 28, height: 1.5, background: "linear-gradient(90deg,#FF6B00,transparent)" }} />
+         
+           
+          
           </div>
 
           {/* Main heading — orange to black gradient */}
-          <h2
-            style={{
-              fontSize: "clamp(2rem, 5vw, 3.2rem)",
-              fontWeight: 900,
-              lineHeight: 1.2,
-              background: "linear-gradient(135deg, #FF6B00 0%, #CC4400 30%, #1a1a1a 60%, #000000 100%)",
-              WebkitBackgroundClip: "text",
-              WebkitTextFillColor: "transparent",
-              backgroundClip: "text",
-              marginBottom: "28px",
-              position: "relative",
-              display: "inline-block",
-            }}
-          >
-            हमारे द्वारा किए गए उत्कृष्ट कार्य
-          </h2>
+          <h2 className="text-2xl md:text-4xl font-heading font-bold text-primary leading-tight mb-6">
+  हमारे द्वारा किए गए उत्कृष्ट कार्य
+</h2>
 
           {/* Decorative lines under heading */}
           <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "6px", marginBottom: "20px" }}>
