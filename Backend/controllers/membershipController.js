@@ -113,7 +113,7 @@ if (lastMember && lastMember.receiptNumber) {
       officePhone: req.body.officePhone,
       mobile: req.body.mobile,
       whatsapp: req.body.whatsapp,
-      email: req.body.email,
+      email: req.body.email || null,
       pan: req.body.pan,
       aadhaar: req.body.aadhaar,
       education: req.body.education,
@@ -327,7 +327,9 @@ const userReceipt = {
   `
 };
 
-    await sgMail.send(userReceipt);
+if (req.body.email && req.body.email.trim() !== "") {
+  await sgMail.send(userReceipt);
+}
 
     return res.status(201).json({
       success: true,

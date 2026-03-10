@@ -30,11 +30,12 @@ const membershipSchema = new mongoose.Schema({
   whatsapp: String,
 
   email: { 
-    type: String, 
-    required: [true, "Email is required"],
+    type: String,
     lowercase: true,
-    trim: true
+    trim: true,
+    default: null
   },
+  
 
   pan: String,
   aadhaar: String,
@@ -77,7 +78,7 @@ const membershipSchema = new mongoose.Schema({
 });
 
 // Index for faster queries
-membershipSchema.index({ email: 1 });
+membershipSchema.index({ email: 1 }, { sparse: true });
 membershipSchema.index({ mobile: 1 });
 
 export default mongoose.model("Membership", membershipSchema);

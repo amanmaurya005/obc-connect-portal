@@ -1128,10 +1128,16 @@ export default function MembershipPage() {
       newErrors.mobile = validationRules.mobile.message;
     }
 
-    // Email validation (required)
-    if (!validationRules.email.regex.test(form.email)) {
-      newErrors.email = validationRules.email.message;
-    }
+    // // Email validation (required)
+    // if (!validationRules.email.regex.test(form.email)) {
+    //   newErrors.email = validationRules.email.message;
+    // }
+
+    // Email optional - sirf filled ho tab validate
+if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
+  newErrors.email = validationRules.email.message;
+}
+
 
     // Optional fields (validate only if filled)
     if (
@@ -1200,11 +1206,15 @@ export default function MembershipPage() {
           return validationRules.whatsapp.message;
         }
       }
-    } else if (fieldName === "email") {
+    }
+    else if (fieldName === 'email') {
       if (value.trim() && !validationRules.email.regex.test(value)) {
         return validationRules.email.message;
       }
-    } else if (fieldName === "pan") {
+      return '';
+    }
+    
+    else if (fieldName === "pan") {
       if (value.trim()) {
         const panUpper = value.toUpperCase();
         if (!/^[A-Z]{5}[0-9]{4}[A-Z]{1}$/.test(panUpper)) {
@@ -1232,9 +1242,12 @@ export default function MembershipPage() {
   };
 
   // Check if field is valid (filled and no errors)
-  const isFieldValid = (fieldName: string, value: string): boolean => {
-    if (!value.trim()) return false;
-    const error = validateField(fieldName, value);
+  const isFieldValid = (fieldName: string, value?: string): boolean => {
+    const safeValue = value || "";
+  
+    if (!safeValue.trim()) return false;
+  
+    const error = validateField(fieldName, safeValue);
     return error === "";
   };
 
@@ -1385,138 +1398,121 @@ export default function MembershipPage() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-
+  
     if (!validateForm()) return;
-
+  
     setLoading(true);
-
+  
     try {
-      // 🔹 1️⃣ Create Razorpay Order
+      // 1️⃣ Create Razorpay Order
       const { data } = await axios.post(
         "http://localhost:3000/api/membership/create-order",
       );
-
+  
       const options = {
-        key: "rzp_test_SPQyvTnLfHY93U", // 👈 yaha apna test key daalo
+        key: "rzp_test_SPQyvTnLfHY93U",
         amount: data.order.amount,
         currency: "INR",
         order_id: data.order.id,
         name: "OBC Mahasabha",
         description: "Membership Fee ₹200",
-
-        handler: async function () {
-          // 🔹 2️⃣ Payment success hone ke baad formData create karo
-          const formData = new FormData();
-
-          formData.append("memberName", form.memberName);
-          formData.append("fatherName", form.fatherName);
-          formData.append("businessNature", form.businessNature);
-          formData.append("organizationPosition", form.organizationPosition);
-          formData.append("residenceAddress", form.residenceAddress);
-          formData.append("officeAddress", form.officeAddress);
-          formData.append("residencePhone", form.residencePhone);
-          formData.append("officePhone", form.officePhone);
-          formData.append("mobile", form.mobile);
-          formData.append("whatsapp", form.whatsapp);
-          formData.append("email", form.email);
-          formData.append("pan", form.pan);
-          formData.append("aadhaar", form.aadhaar);
-          formData.append("education", form.education);
-          formData.append("otherEducation", form.otherEducation);
-          formData.append("dob", form.dob);
-          formData.append("marriageDate", form.marriageDate || "");
-          formData.append("bloodGroup", form.bloodGroup);
-          formData.append("tshirtSize", form.tshirtSize);
-          formData.append("socialWork", form.socialWork);
-          formData.append("specialAchievement", form.specialAchievement);
-          formData.append("membershipType", form.membershipType);
-          formData.append("state", form.state);
-          formData.append("district", form.district);
-          formData.append("vidhansabha", selectedVidhansabha);
-          formData.append("membershipFee", "200");
-
-          if (form.imageFile) {
-            formData.append("imageFile", form.imageFile);
-          }
-
-          // 🔹 3️⃣ Save Membership after payment
-          const res = await axios.post(
-            "http://localhost:3000/api/membership/register",
-            formData,
-            {
-              headers: {
-                "Content-Type": "multipart/form-data",
+  
+        handler: async function (response) {
+          try {
+            console.log("✅ Payment Success:", response);
+            
+            // 2️⃣ FormData create
+            const formData = new FormData();
+            formData.append("memberName", form.memberName);
+            formData.append("fatherName", form.fatherName);
+            formData.append("businessNature", form.businessNature);
+            formData.append("organizationPosition", form.organizationPosition);
+            formData.append("residenceAddress", form.residenceAddress);
+            formData.append("officeAddress", form.officeAddress);
+            formData.append("residencePhone", form.residencePhone);
+            formData.append("officePhone", form.officePhone);
+            formData.append("mobile", form.mobile);
+            formData.append("whatsapp", form.whatsapp);
+            formData.append("email", form.email);
+            formData.append("pan", form.pan);
+            formData.append("aadhaar", form.aadhaar);
+            formData.append("education", form.education);
+            formData.append("otherEducation", form.otherEducation);
+            formData.append("dob", form.dob);
+            formData.append("marriageDate", form.marriageDate || "");
+            formData.append("bloodGroup", form.bloodGroup);
+            formData.append("tshirtSize", form.tshirtSize);
+            formData.append("socialWork", form.socialWork);
+            formData.append("specialAchievement", form.specialAchievement);
+            formData.append("membershipType", form.membershipType);
+            formData.append("state", form.state);
+            formData.append("district", form.district);
+            formData.append("vidhansabha", selectedVidhansabha);
+            formData.append("membershipFee", "200");
+            formData.append("razorpay_payment_id", response.razorpay_payment_id); // ✅ ADD YE
+            formData.append("razorpay_order_id", response.razorpay_order_id);     // ✅ ADD YE
+  
+            if (form.imageFile) {
+              formData.append("imageFile", form.imageFile);
+            }
+  
+            console.log("📤 Sending form data to backend...");
+  
+            // 3️⃣ Save Membership
+            const res = await axios.post(
+              "http://localhost:3000/api/membership/register",
+              formData,
+              {
+                headers: {
+                  "Content-Type": "multipart/form-data",
+                },
               },
-            },
-          );
-
-          console.log("Success:", res.data);
-
-          setSubmitted(true);
-          setIsValid(true);
-
-          // Reset form
-          setForm({
-            memberName: "",
-            fatherName: "",
-            businessNature: "",
-            organizationPosition: "",
-            residenceAddress: "",
-            officeAddress: "",
-            residencePhone: "",
-            officePhone: "",
-            mobile: "",
-            whatsapp: "",
-            email: "",
-            pan: "",
-            aadhaar: "",
-            education: "",
-            otherEducation: "",
-            dob: "",
-            marriageDate: "",
-            bloodGroup: "",
-            tshirtSize: "",
-            socialWork: "",
-            specialAchievement: "",
-            membershipType: "life",
-            state: "",
-            district: "",
-            imageFile: undefined,
-          });
-
-          setImagePreview("");
-          setErrors({});
-
-          const imageInput = document.getElementById("imageInput");
-          if (imageInput instanceof HTMLInputElement) imageInput.value = "";
-
-          setTimeout(() => {
-            setSubmitted(false);
-            setIsValid(false);
-          }, 3000);
+              { timeout: 30000 } // 30 sec timeout
+            );
+  
+            console.log("✅ Backend Success:", res.data);
+            setSubmitted(true);
+            setIsValid(true);
+  
+            // Reset form (same code)
+            setForm({ /* same reset code */ });
+            setImagePreview("");
+            setErrors({});
+            
+            const imageInput = document.getElementById("imageInput");
+            if (imageInput instanceof HTMLInputElement) imageInput.value = "";
+            
+            setTimeout(() => {
+              setSubmitted(false);
+              setIsValid(false);
+            }, 3000);
+  
+          } catch (backendError) {
+            console.error("❌ Backend Registration Failed:", backendError);
+            alert(`Registration failed: ${backendError.response?.data?.error || backendError.message || 'Server error'}`);
+          }
         },
-
-        prefill: {
-          name: form.memberName,
-          email: form.email,
-          contact: form.mobile,
-        },
-
-        theme: {
-          color: "#2563eb",
-        },
+  
+        // ❌ Payment fail handler
+        modal: {
+          ondismiss: function() {
+            console.log("❌ Payment cancelled by user");
+            alert("Payment cancelled");
+          }
+        }
       };
-
+  
       const rzp = new window.Razorpay(options);
       rzp.open();
+  
     } catch (error) {
-      console.error(error);
-      alert("Payment initialization failed");
+      console.error("❌ Razorpay Error:", error);
+      alert("Payment initialization failed: " + error.message);
     } finally {
       setLoading(false);
     }
   };
-
+  
   return (
     <div className="font-sans bg-[#f5f0ea] min-h-screen">
       {/* ── Hero ── */}
@@ -1952,7 +1948,6 @@ export default function MembershipPage() {
                     onChange={handleChange}
                     onBlur={handleBlur}
                     placeholder="आपका@ईमेल.कॉम"
-                    required
                     className={`w-full border rounded-lg px-4 py-2 text-sm bg-white focus:outline-none focus:ring-4 transition ${errors.email ? "border-red-500 focus:border-red-500 focus:ring-red-500/20" : isFieldValid("email", form.email) ? "border-green-500 focus:border-green-500 focus:ring-green-500/20" : "border-gray-200 focus:border-[#e87722] focus:ring-[#e87722]/20"}`}
                   />
                   <ErrorText
