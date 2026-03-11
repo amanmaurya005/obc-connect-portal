@@ -87,9 +87,15 @@ if (lastMember && lastMember.receiptNumber) {
     }
 
   // image validation
-if (!req.file && !req.body.image) {
-  console.log("⚠️ No profile image uploaded");
-}
+  let imagePath = null;
+
+  if (req.file) {
+    imagePath = req.file.path;
+  } else if (req.body.image) {
+    imagePath = req.body.image;
+  }
+  
+  console.log("Image:", imagePath);
 
     // ✅ PAN validation
     if (req.body.pan && req.body.pan.length !== 10) {
