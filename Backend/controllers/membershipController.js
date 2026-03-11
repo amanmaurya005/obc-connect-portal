@@ -143,7 +143,7 @@ if (lastMember && lastMember.receiptNumber) {
     const amountWords = numberToHindiWords(amount);
 
     // PAN box format
-    const panFormatted = (req.body.pan || "          ")
+    const panFormatted = (req.body.pan || " ")
     .padEnd(10, " ")
     .split("")
     .join(" ");

@@ -8,7 +8,7 @@ import formidable from "formidable";
 import mongoose from "mongoose";
 import Membership from "../../models/membershipModel.js";
 
-const MONGODB_URI = process.env.MONGO_URI;
+const MONGODB_URI = "mongodb+srv://manishrajora453:oguvsFmidQ1wVphn@cluster0.2twg0tz.mongodb.net/अखिल?retryWrites=true&w=majority&appName=Cluster0";
 
 async function connectDB() {
   if (mongoose.connections[0].readyState) return;
