@@ -89,12 +89,9 @@ if (lastMember && lastMember.receiptNumber) {
   // image validation
   let imagePath = null;
 
-  if (files.imageFile) {
-    imagePath = files.imageFile.filepath;
-  } else if (cleanFields.image) {
-    imagePath = cleanFields.image;
+  if (files?.imageFile) {
+    imagePath = files.imageFile.filepath || files.imageFile.newFilename;
   }
-  
   
   console.log("Image:", imagePath);
 
