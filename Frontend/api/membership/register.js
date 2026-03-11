@@ -40,17 +40,19 @@ export default async function handler(req, res) {
         });
       }
 
-      let imagePath = null;
+      const cleanFields = {};
 
-      if (files.imageFile) {
-        imagePath = files.imageFile.filepath;
-      }
+      Object.keys(fields).forEach((key) => {
+        cleanFields[key] = Array.isArray(fields[key])
+          ? fields[key][0]
+          : fields[key];
+      });
 
       try {
 
         const member = await Membership.create({
-          ...fields,
-          image: imagePath || fields.image
+          ...cleanFields,
+          image: null
         });
 
         return res.status(200).json({
