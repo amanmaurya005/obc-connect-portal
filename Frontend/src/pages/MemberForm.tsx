@@ -1404,7 +1404,7 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
     setLoading(true);
   
     try {
-      // 1️⃣ Create Razorpay Order
+     
       const { data } = await axios.post(
         "/api/membership/create-order",
       );
