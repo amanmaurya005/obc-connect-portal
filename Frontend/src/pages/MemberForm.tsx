@@ -1471,6 +1471,8 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
             );
   
             console.log("✅ Backend Success:", res.data);
+            console.log(res);
+            
             setSubmitted(true);
             setIsValid(true);
 
