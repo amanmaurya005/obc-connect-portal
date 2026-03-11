@@ -10,11 +10,11 @@ export default async function handler(req, res) {
 
     const razorpay = new Razorpay({
       key_id: process.env.RAZORPAY_KEY_ID,
-      key_secret: process.env.RAZORPAY_SECRET,
+      key_secret: process.env.RAZORPAY_KEY_SECRET,
     });
 
     const options = {
-      amount: 200 * 100, // ₹200
+      amount: 200 * 100, 
       currency: "INR",
       receipt: "membership_receipt_" + Date.now(),
     };
