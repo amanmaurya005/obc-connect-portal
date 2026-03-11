@@ -40,7 +40,7 @@ const numberToHindiWords = (num) => {
 export const createOrder = async (req, res) => {
   try {
     const options = {
-      amount: 200 * 100, // ₹200 fixed
+      amount: 251 * 100, // ₹251
       currency: "INR",
       receipt: "receipt_" + Date.now(),
     };
@@ -67,7 +67,8 @@ export const createMembership = async (req, res) => {
     console.log("FILE:", req.file);
 
 
-    const lastMember = await Membership.findOne().sort({ receiptNumber: -1 });
+    // const lastMember = await Membership.findOne().sort({ receiptNumber: -1 });
+    const lastMember = await Membership.findOne({}, {}, { sort: { receiptNumber: -1 } });
 
 let newReceiptNumber = 1;
 
@@ -85,10 +86,10 @@ if (lastMember && lastMember.receiptNumber) {
       }
     }
 
-    if (!req.file) {
+    if (!req.file && !req.body.image) {
       return res.status(400).json({
         success: false,
-        message: "Profile image required",
+        message: "Profile image required"
       });
     }
 
@@ -125,16 +126,16 @@ if (lastMember && lastMember.receiptNumber) {
       socialWork: req.body.socialWork,
       specialAchievement: req.body.specialAchievement,
       membershipType: req.body.membershipType,
-      membershipFee: req.body.membershipFee ? parseInt(req.body.membershipFee) : 200,
+      membershipFee: req.body.membershipFee ? parseInt(req.body.membershipFee) : 251,
       state: req.body.state,
       district: req.body.district,
       vidhansabha: req.body.vidhansabha,
-      image: req.file.path,
+      image: req.file?.path || req.body.image
     });
 
     await membership.save();
 
-    const amount = req.body.membershipFee || 200;
+    const amount = req.body.membershipFee || 251;
     const amountWords = numberToHindiWords(amount);
 
     // PAN box format
