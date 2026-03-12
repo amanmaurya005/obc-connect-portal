@@ -126,14 +126,13 @@
 
 
 
-
 import formidable from "formidable";
 import mongoose from "mongoose";
 import { v2 as cloudinary } from "cloudinary";
 import sgMail from "@sendgrid/mail";
 
+/* ---------------- SERVICE CONFIG ---------------- */
 
-// 1. Service Configurations using Environment Variables
 cloudinary.config({
   cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
   api_key: process.env.CLOUDINARY_API_KEY,
@@ -142,55 +141,75 @@ cloudinary.config({
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
-
-
 export const config = {
   api: {
-    bodyParser: false, // Disabling default parser for formidable
+    bodyParser: false,
   },
 };
 
-/* ---------------- MONGOOSE SCHEMA & MODEL ---------------- */
-const membershipSchema = new mongoose.Schema({
-  receiptNumber: { type: Number, required: true, unique: true },
-  membershipFee: { type: Number, default: 251 },
-  memberName: { type: String, required: true, trim: true },
-  fatherName: { type: String, required: true, trim: true },
-  businessNature: String,
-  organizationPosition: String,
-  residenceAddress: { type: String, required: true },
-  officeAddress: String,
-  residencePhone: String,
-  officePhone: String,
-  mobile: { type: String, required: true },
-  whatsapp: String,
-  email: { type: String, lowercase: true, trim: true, default: null },
-  pan: String,
-  aadhaar: String,
-  education: { type: String, required: true },
-  otherEducation: String,
-  dob: { type: Date, required: true },
-  marriageDate: Date,
-  bloodGroup: { type: String, required: true },
-  tshirtSize: { type: String, required: true },
-  socialWork: String,
-  specialAchievement: String,
-  membershipType: { type: String, default: "life" },
-  state: { type: String, required: true },
-  district: { type: String, required: true },
-  vidhansabha: { type: String, required: true },
-  image: { type: String, required: true },
-}, { timestamps: true });
+/* ---------------- MONGOOSE SCHEMA ---------------- */
 
-const Membership = mongoose.models.Membership || mongoose.model("Membership", membershipSchema);
+const membershipSchema = new mongoose.Schema(
+  {
+    receiptNumber: { type: Number, required: true, unique: true },
+    membershipFee: { type: Number, default: 251 },
+
+    memberName: { type: String, required: true, trim: true },
+    fatherName: { type: String, required: true, trim: true },
+
+    businessNature: String,
+    organizationPosition: String,
+
+    residenceAddress: { type: String, required: true },
+    officeAddress: String,
+
+    residencePhone: String,
+    officePhone: String,
+
+    mobile: { type: String, required: true },
+    whatsapp: String,
+
+    email: { type: String, lowercase: true, trim: true, default: null },
+
+    pan: String,
+    aadhaar: String,
+
+    education: { type: String, required: true },
+    otherEducation: String,
+
+    dob: { type: Date, required: true },
+    marriageDate: Date,
+
+    bloodGroup: { type: String, required: true },
+    tshirtSize: { type: String, required: true },
+
+    socialWork: String,
+    specialAchievement: String,
+
+    membershipType: { type: String, default: "life" },
+
+    state: { type: String, required: true },
+    district: { type: String, required: true },
+    vidhansabha: { type: String, required: true },
+
+    image: { type: String, required: true },
+  },
+  { timestamps: true }
+);
+
+const Membership =
+  mongoose.models.Membership ||
+  mongoose.model("Membership", membershipSchema);
 
 /* ---------------- DATABASE CONNECT ---------------- */
+
 async function connectDB() {
   if (mongoose.connections[0].readyState) return;
-  await mongoose.connect(process.env.MONGO_URI); // Using Env Var
+  await mongoose.connect(process.env.MONGO_URI);
 }
 
 /* ---------------- API HANDLER ---------------- */
+
 export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ message: "Method Not Allowed" });
@@ -199,9 +218,11 @@ export default async function handler(req, res) {
   try {
     await connectDB();
 
-    // Parse Form Data
+    /* -------- FORM DATA PARSE -------- */
+
     const data = await new Promise((resolve, reject) => {
       const form = formidable({ multiples: false, keepExtensions: true });
+
       form.parse(req, (err, fields, files) => {
         if (err) reject(err);
         resolve({ fields, files });
@@ -210,62 +231,94 @@ export default async function handler(req, res) {
 
     const { fields, files } = data;
 
-    // Clean Fields (convert arrays to strings)
+    /* -------- CLEAN FIELDS -------- */
+
     const cleanFields = {};
     Object.keys(fields).forEach((key) => {
-      cleanFields[key] = Array.isArray(fields[key]) ? fields[key][0] : fields[key];
+      cleanFields[key] = Array.isArray(fields[key])
+        ? fields[key][0]
+        : fields[key];
     });
 
-    // 2. Cloudinary Upload Logic 🚀
+    /* -------- IMAGE UPLOAD -------- */
+
     let finalImageUrl = cleanFields.image || "";
-    const file = files.imageFile ? (Array.isArray(files.imageFile) ? files.imageFile[0] : files.imageFile) : null;
+
+    const file = files.imageFile
+      ? Array.isArray(files.imageFile)
+        ? files.imageFile[0]
+        : files.imageFile
+      : null;
 
     if (file && file.filepath) {
-      const uploadResponse = await cloudinary.uploader.upload(file.filepath, {
+      const upload = await cloudinary.uploader.upload(file.filepath, {
         folder: "obc_memberships",
       });
-      finalImageUrl = uploadResponse.secure_url; // Real URL for DB
+
+      finalImageUrl = upload.secure_url;
     }
 
     if (!finalImageUrl) {
-      return res.status(400).json({ success: false, message: "Profile image is required" });
+      return res.status(400).json({
+        success: false,
+        message: "Profile image required",
+      });
     }
 
-    // 3. Generate Receipt Number
-    const lastMember = await Membership.findOne({}, {}, { sort: { receiptNumber: -1 } });
+    /* -------- RECEIPT NUMBER -------- */
+
+    const lastMember = await Membership.findOne(
+      {},
+      {},
+      { sort: { receiptNumber: -1 } }
+    );
+
     const newReceiptNumber = (lastMember?.receiptNumber || 0) + 1;
 
-    // 4. Save to MongoDB
+    /* -------- SAVE MEMBER -------- */
+
     const member = await Membership.create({
       ...cleanFields,
+
       receiptNumber: newReceiptNumber,
       image: finalImageUrl,
+
       dob: cleanFields.dob ? new Date(cleanFields.dob) : null,
-      marriageDate: cleanFields.marriageDate ? new Date(cleanFields.marriageDate) : null,
+      marriageDate: cleanFields.marriageDate
+        ? new Date(cleanFields.marriageDate)
+        : null,
     });
 
-    // 5. Send Notification Email via SendGrid
+    /* -------- ADMIN EMAIL -------- */
+
     try {
-      const emailMsg = {
+      const msg = {
         to: "info@obcmahasabha.co.in",
-        from: "info@obcmahasabha.co.in", // Must be verified in SendGrid
+        from: "info@obcmahasabha.co.in",
         subject: `🆕 New Member: ${cleanFields.memberName}`,
-        html: `<strong>New membership registered!</strong><br>Receipt No: ${newReceiptNumber}<br>Mobile: ${cleanFields.mobile}`,
+        html: `
+        <h3>New Membership Registered</h3>
+        <p><b>Name:</b> ${cleanFields.memberName}</p>
+        <p><b>Mobile:</b> ${cleanFields.mobile}</p>
+        <p><b>Receipt No:</b> ${newReceiptNumber}</p>
+        `,
       };
-      await sgMail.send(emailMsg);
+
+      await sgMail.send(msg);
     } catch (mailError) {
-      console.error("Email Error:", mailError);
-      // We don't block the response even if email fails
+      console.error("Email error:", mailError);
     }
+
+    /* -------- RESPONSE -------- */
 
     return res.status(200).json({
       success: true,
-      message: "Membership registered, Image uploaded, and Email sent!",
+      message: "Membership registered successfully",
       data: member,
     });
-
   } catch (error) {
-    console.error("❌ API Error:", error);
+    console.error("API ERROR:", error);
+
     return res.status(500).json({
       success: false,
       message: "Internal Server Error",
