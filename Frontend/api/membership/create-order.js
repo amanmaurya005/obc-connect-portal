@@ -14,7 +14,7 @@ export default async function handler(req, res) {
     });
 
     const options = {
-      amount: 200 * 100, 
+      amount: 251 * 100, 
       currency: "INR",
       receipt: "membership_receipt_" + Date.now(),
     };
