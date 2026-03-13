@@ -1522,7 +1522,7 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
           }
         },
   
-        // ❌ Payment fail handler
+        // ❌ Payment fdler
         modal: {
           ondismiss: function() {
             console.log("❌ Payment cancelled by user");
@@ -1531,8 +1531,14 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
         }
       };
   
-      const rzp = new window.Razorpay(options);
-      rzp.open();
+      // Razorpay SDK checkail han
+if (!window.Razorpay) {
+  alert("Razorpay SDK failed to load.");
+  return;
+}
+
+const rzp = new window.Razorpay(options);
+rzp.open();
   
     } catch (error) {
       console.error("❌ Razorpay Error:", error);
