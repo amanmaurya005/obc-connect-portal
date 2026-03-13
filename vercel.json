@@ -1,18 +1,13 @@
 {
   "version": 2,
-  "rewrites": [
+  "routes": [
     {
-      "source": "/api/(.*)",
-      "destination": "/Backend/api/index.js"
+      "src": "/api/(.*)",
+      "dest": "/api/index.js"
     },
     {
-      "source": "/(.*)",
-      "destination": "/Frontend/$1"
+      "src": "/(.*)",
+      "dest": "/Frontend/$1"
     }
-  ],
-  "functions": {
-    "Backend/api/index.js": {
-      "runtime": "nodejs18.x"
-    }
-  }
+  ]
 }
