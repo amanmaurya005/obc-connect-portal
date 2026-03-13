@@ -1410,7 +1410,7 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
       );
   
       const options = {
-        key: "rzp_test_SPQyvTnLfHY93U",
+        key: data.key,
         amount: data.order.amount,
         currency: "INR",
         order_id: data.order.id,
