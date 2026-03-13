@@ -1406,7 +1406,7 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
     try {
      
       const { data } = await axios.post(
-        "/api/membership/create-order",
+        "https://www.obcmahasabha.co.in/api/membership/create-order",
       );
   
       const options = {
@@ -1460,7 +1460,7 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   
             // 3️⃣ Save Membership
             const res = await axios.post(
-              "/api/membership/register",
+              "https://www.obcmahasabha.co.in/api/membership/register",
               formData,
               {
                 headers: {

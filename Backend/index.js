@@ -67,7 +67,7 @@ app.use(express.urlencoded({ extended: true }));
 // Static folder
 app.use("/uploads", express.static("uploads"));
 
-// API Routes
+// API Routes 
 app.use("/api/membership", membershipRoute);
 app.use("/api/donations", donationRoute);
 

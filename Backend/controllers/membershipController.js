@@ -86,16 +86,15 @@ if (lastMember && lastMember.receiptNumber) {
       }
     }
 
-  // image validation
-  let imagePath = null;
+    let imagePath = null;
 
-  if (files?.imageFile) {
-    imagePath = files.imageFile.filepath || files.imageFile.newFilename;
-  } else if (cleanFields.image) {
-    imagePath = cleanFields.image;
-  }
-  
-  console.log("Image:", imagePath);
+    if (req.file) {
+      imagePath = req.file.path;
+    } else if (req.body.image) {
+      imagePath = req.body.image;
+    }
+    
+    console.log("Image:", imagePath);
 
     // ✅ PAN validation
     if (req.body.pan && req.body.pan.length !== 10) {
@@ -136,6 +135,7 @@ if (lastMember && lastMember.receiptNumber) {
       vidhansabha: req.body.vidhansabha,
       image: req.file?.path || req.body.image
     });
+    console.log(req.file?.path)
 
     await membership.save();
 
