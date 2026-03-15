@@ -64,7 +64,7 @@
 // // Static folder
 // app.use("/uploads", express.static("uploads"));
 
-// // API Routes 
+// // API Routes
 // app.use("/api/membership", membershipRoute);
 // app.use("/api/donations", donationRoute);
 
@@ -78,17 +78,10 @@
 //   console.log(`🚀 Server running on port ${PORT}`);
 // });
 
-
-
-
-
-
-
-
-
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import serverless from "serverless-http";
 
 import connectDB from "./config/db.js";
 import membershipRoute from "./routes/membershipRoute.js";
@@ -106,7 +99,7 @@ const corsOptions = {
     "http://localhost:5173",
     "https://www.obcmahasabha.co.in",
   ],
-  methods: ["GET", "POST", "PUT", "DELETE"],
+  methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   credentials: true,
 };
 
@@ -130,4 +123,4 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-export default app;
+export default serverless(app);
