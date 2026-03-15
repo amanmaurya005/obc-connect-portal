@@ -1,6 +1,7 @@
 import express from "express";
 import cors from "cors";
 import dotenv from "dotenv";
+import serverless from "serverless-http";
 
 import connectDB from "./config/db.js";
 import membershipRoute from "./routes/membershipRoute.js";
@@ -42,4 +43,4 @@ if (process.env.NODE_ENV !== "production") {
   });
 }
 
-export default app;
+export default serverless(app);
