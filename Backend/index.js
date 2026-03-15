@@ -117,8 +117,8 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use("/uploads", express.static("uploads"));
 
-app.use("/api/membership", membershipRoute);
-app.use("/api/donations", donationRoute);
+app.use("/membership", membershipRoute);
+app.use("/donations", donationRoute);
 
 app.get("/", (req, res) => {
   res.send("API is running...");
