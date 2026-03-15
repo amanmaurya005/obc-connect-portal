@@ -1,17 +1,14 @@
 import Membership from "../models/membershipModel.js";
 import sgMail from "@sendgrid/mail";
 import dotenv from "dotenv";
-
-
-
 import Razorpay from "razorpay";
+
+dotenv.config();
 
 const razorpay = new Razorpay({
   key_id: process.env.RAZORPAY_KEY_ID,
   key_secret: process.env.RAZORPAY_KEY_SECRET,
 });
-
-dotenv.config();
 
 sgMail.setApiKey(process.env.SENDGRID_API_KEY);
 
@@ -50,6 +47,7 @@ export const createOrder = async (req, res) => {
     res.status(200).json({
       success: true,
       order,
+      key: process.env.RAZORPAY_KEY_ID,
     });
 
   } catch (error) {
