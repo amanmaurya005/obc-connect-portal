@@ -5,22 +5,19 @@
 
 
 
-
 export default function handler(req, res) {
-    const url = new URL(req.url, `http://${req.headers.host}`);
-    const path = url.pathname;
+    console.log('API HIT:', req.url);
     
-    console.log('HIT:', path);
-    
-    if (path === '/api/test' || path === '/test') {
-      res.json({ 
+    // Test route
+    if (req.url === '/test' || req.url === '/api/test') {
+      res.status(200).json({ 
         success: true, 
-        message: '✅ API Working 100%!',
-        path: path 
+        message: '✅ API 100% Working!',
+        timestamp: new Date().toISOString()
       });
       return;
     }
     
-    res.status(404).json({ error: 'Not found', path: path });
+    res.status(404).json({ error: 'Route not found' });
   }
   
