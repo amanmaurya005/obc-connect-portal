@@ -25,14 +25,12 @@ const numberToHindiWords = (num) => {
     100: "एक सौ मात्र",
     251: "दो सौ इक्यावन मात्र",
     500: "पाँच सौ मात्र",
-    1000: "एक हजार मात्र"
+    1000: "एक हजार मात्र",
   };
   return hindiMap[num] || num + " मात्र";
 };
 
-
 // ✅ Get Last Receipt Number
-
 
 export const createOrder = async (req, res) => {
   try {
@@ -43,13 +41,12 @@ export const createOrder = async (req, res) => {
     };
 
     const order = await razorpay.orders.create(options);
-
+    console.log(process.env.RAZORPAY_KEY_ID);
     res.status(200).json({
       success: true,
       order,
       key: process.env.RAZORPAY_KEY_ID,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
@@ -58,28 +55,35 @@ export const createOrder = async (req, res) => {
   }
 };
 
-
 export const createMembership = async (req, res) => {
   try {
     console.log("BODY:", req.body);
     console.log("FILE:", req.file);
 
-
     // const lastMember = await Membership.findOne().sort({ receiptNumber: -1 });
-    const lastMember = await Membership.findOne({}, {}, { sort: { receiptNumber: -1 } });
+    const lastMember = await Membership.findOne(
+      {},
+      {},
+      { sort: { receiptNumber: -1 } },
+    );
 
-let newReceiptNumber = 1;
+    let newReceiptNumber = 1;
 
-if (lastMember && lastMember.receiptNumber) {
-  newReceiptNumber = lastMember.receiptNumber + 1;
-}
+    if (lastMember && lastMember.receiptNumber) {
+      newReceiptNumber = lastMember.receiptNumber + 1;
+    }
     // ✅ Added required field validation
-    const requiredFields = ['memberName', 'fatherName', 'mobile', 'residenceAddress'];
+    const requiredFields = [
+      "memberName",
+      "fatherName",
+      "mobile",
+      "residenceAddress",
+    ];
     for (let field of requiredFields) {
       if (!req.body[field]) {
         return res.status(400).json({
           success: false,
-          message: `${field} is required`
+          message: `${field} is required`,
         });
       }
     }
@@ -91,14 +95,14 @@ if (lastMember && lastMember.receiptNumber) {
     } else if (req.body.image) {
       imagePath = req.body.image;
     }
-    
+
     console.log("Image:", imagePath);
 
     // ✅ PAN validation
     if (req.body.pan && req.body.pan.length !== 10) {
       return res.status(400).json({
         success: false,
-        message: "PAN must be exactly 10 characters"
+        message: "PAN must be exactly 10 characters",
       });
     }
 
@@ -121,19 +125,23 @@ if (lastMember && lastMember.receiptNumber) {
       education: req.body.education,
       otherEducation: req.body.otherEducation,
       dob: req.body.dob ? new Date(req.body.dob) : null,
-      marriageDate: req.body.marriageDate ? new Date(req.body.marriageDate) : null, // ✅ Fixed null check
+      marriageDate: req.body.marriageDate
+        ? new Date(req.body.marriageDate)
+        : null, // ✅ Fixed null check
       bloodGroup: req.body.bloodGroup,
       tshirtSize: req.body.tshirtSize,
       socialWork: req.body.socialWork,
       specialAchievement: req.body.specialAchievement,
       membershipType: req.body.membershipType,
-      membershipFee: req.body.membershipFee ? parseInt(req.body.membershipFee) : 251,
+      membershipFee: req.body.membershipFee
+        ? parseInt(req.body.membershipFee)
+        : 251,
       state: req.body.state,
       district: req.body.district,
       vidhansabha: req.body.vidhansabha,
-      image: req.file?.path || req.body.image
+      image: req.file?.path || req.body.image,
     });
-    console.log(req.file?.path)
+    console.log(req.file?.path);
 
     await membership.save();
 
@@ -142,9 +150,9 @@ if (lastMember && lastMember.receiptNumber) {
 
     // PAN box format
     const panFormatted = (req.body.pan || " ")
-    .padEnd(10, " ")
-    .split("")
-    .join(" ");
+      .padEnd(10, " ")
+      .split("")
+      .join(" ");
 
     // ✅ Updated Email Template
     const msg = {
@@ -214,12 +222,11 @@ if (lastMember && lastMember.receiptNumber) {
 
     await sgMail.send(msg);
 
-  
-const userReceipt = {
-  to: req.body.email,
-  from: "info@obcmahasabha.co.in",
-  subject: "🧾 सदस्यता रसीद - अखिल भारतीय संयुक्त ओ.बी.सी. महासभा",
-  html: `
+    const userReceipt = {
+      to: req.body.email,
+      from: "info@obcmahasabha.co.in",
+      subject: "🧾 सदस्यता रसीद - अखिल भारतीय संयुक्त ओ.बी.सी. महासभा",
+      html: `
     <div style="max-width:700px; margin:20px auto; background-color:#f38cb4; padding:30px; border:2px solid #333; font-family: Arial; color:#1a1a1a; position: relative;">
       
       <table width="100%" style="font-size:12px; font-weight:bold;">
@@ -327,19 +334,18 @@ const userReceipt = {
         </tr>
       </table>
     </div>
-  `
-};
+  `,
+    };
 
-if (req.body.email && req.body.email.trim() !== "") {
-  await sgMail.send(userReceipt);
-}
+    if (req.body.email && req.body.email.trim() !== "") {
+      await sgMail.send(userReceipt);
+    }
 
     return res.status(201).json({
       success: true,
       message: "Membership saved and admin notified successfully",
       data: membership,
     });
-
   } catch (error) {
     console.error("Error:", error.response?.body || error.message);
 
@@ -351,10 +357,6 @@ if (req.body.email && req.body.email.trim() !== "") {
   }
 };
 
-
-
-
-
 export const getAllMemberships = async (req, res) => {
   try {
     const memberships = await Membership.find().sort({ receiptNumber: -1 });
@@ -362,23 +364,16 @@ export const getAllMemberships = async (req, res) => {
     res.status(200).json({
       success: true,
       count: memberships.length,
-      data: memberships
+      data: memberships,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Failed to fetch memberships",
-      error: error.message
+      error: error.message,
     });
   }
 };
-
-
-
-
-
-
 
 export const getSingleMembership = async (req, res) => {
   try {
@@ -387,20 +382,19 @@ export const getSingleMembership = async (req, res) => {
     if (!membership) {
       return res.status(404).json({
         success: false,
-        message: "Membership not found"
+        message: "Membership not found",
       });
     }
 
     res.status(200).json({
       success: true,
-      data: membership
+      data: membership,
     });
-
   } catch (error) {
     res.status(500).json({
       success: false,
       message: "Error fetching membership",
-      error: error.message
+      error: error.message,
     });
   }
 };
