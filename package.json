@@ -2,7 +2,18 @@
     "name": "obc-connect-portal",
     "version": "1.0.0",
     "private": true,
+    "type": "module",
     "dependencies": {
-      "serverless-http": "^4.0.0"
+      "serverless-http": "^4.0.0",
+      "@sendgrid/mail": "^8.1.6",
+      "cloudinary": "^1.41.0",
+      "cors": "^2.8.6",
+      "dotenv": "^17.3.1",
+      "express": "^5.2.1",
+      "formidable": "^3.5.4",
+      "mongoose": "^9.2.2",
+      "multer": "^2.0.2",
+      "multer-storage-cloudinary": "^4.0.0",
+      "razorpay": "^2.9.6"
     }
   }
