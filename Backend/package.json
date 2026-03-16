@@ -7,10 +7,6 @@
     "start": "node index.js",
     "dev": "nodemon index.js"
   },
-  "keywords": [],
-  "author": "",
-  "license": "ISC",
-  "description": "",
   "dependencies": {
     "@sendgrid/mail": "^8.1.6",
     "cloudinary": "^1.41.0",
@@ -18,7 +14,6 @@
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
     "formidable": "^3.5.4",
-    "mongoos": "^0.0.1-security",
     "mongoose": "^9.2.2",
     "multer": "^2.0.2",
     "multer-storage-cloudinary": "^4.0.0",
