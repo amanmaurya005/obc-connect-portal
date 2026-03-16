@@ -6,16 +6,21 @@
 
 
 
-// api/index.js
-import express from 'express';  // ES module के लिए
-// या const express = require('express');  // CommonJS
-
-const app = express();
-app.use(express.json());
-// app.use(cors());  // अगर लगाया है
-
-// आपके सभी routes यहाँ import/add करें (membership, multer, etc.)
-app.get('/test', (req, res) => res.json({ status: 'Working!' }));
-
-// NO serverless-http, NO app.listen()
-export default app;  // या module.exports = app;
+export default function handler(req, res) {
+    const url = new URL(req.url, `http://${req.headers.host}`);
+    const path = url.pathname;
+    
+    console.log('HIT:', path);
+    
+    if (path === '/api/test' || path === '/test') {
+      res.json({ 
+        success: true, 
+        message: '✅ API Working 100%!',
+        path: path 
+      });
+      return;
+    }
+    
+    res.status(404).json({ error: 'Not found', path: path });
+  }
+  
