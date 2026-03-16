@@ -49,13 +49,13 @@
 
 import express from "express";
 import cors from "cors";
-import dotenv from "dotenv";
+
 
 
 import membershipRoute from "./routes/membershipRoute.js";
 import donationRoute from "./routes/donationRoute.js";
 
-dotenv.config();
+
 
 const app = express();
 
