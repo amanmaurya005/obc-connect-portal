@@ -10,43 +10,71 @@ dotenv.config();
 
 const app = express();
 
-// ✅ Database connection (cached for serverless)
-connectDB(process.env.MONGODB_URI);
+// ✅ Middleware
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
 
-// ✅ CORS - Vercel ke liye bhi kaam karega
-app.use(cors({
+// ✅ CORS setup
+const corsOptions = {
   origin: [
     "http://localhost:8080",
     "http://localhost:3000",
+    "http://localhost:5173",
     "https://www.obcmahasabha.co.in",
     "https://obcmahasabha.co.in"
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"]
-}));
+};
+app.use(cors(corsOptions));
 
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+// ✅ Database connection (with error handling)
+try {
+  await connectDB();
+} catch (error) {
+  console.error("Failed to connect to database:", error.message);
+}
 
 // ✅ Routes
 app.use("/api/membership", membershipRoute);
 app.use("/api/donations", donationRoute);
 
-// ✅ Health check
+// ✅ Health check route
 app.get("/api", (req, res) => {
-  res.json({ 
-    message: "Backend API is running on Vercel!",
+  res.json({
+    message: "API is running on Vercel!",
     status: "healthy",
-    timestamp: new Date().toISOString()
+    timestamp: new Date().toISOString(),
+    environment: process.env.NODE_ENV || "development"
   });
 });
 
-// ✅ Local development ke liye
+// ✅ Test route
+app.get("/api/test", (req, res) => {
+  res.json({ message: "Test route working!" });
+});
+
+// ✅ 404 handler
+app.use((req, res) => {
+  res.status(404).json({ error: "Route not found" });
+});
+
+// ✅ Error handler
+app.use((err, req, res, next) => {
+  console.error("Server error:", err);
+  res.status(500).json({ 
+    error: "Internal server error",
+    message: err.message 
+  });
+});
+
+// ✅ Local development
 if (process.env.NODE_ENV !== "production") {
   const PORT = process.env.PORT || 3000;
   app.listen(PORT, () => {
-    console.log(`🚀 Local server running on port ${PORT}`);
+    console.log(`🚀 Local server running on http://localhost:${PORT}`);
+    console.log(`📝 API available at http://localhost:${PORT}/api`);
   });
 }
 
