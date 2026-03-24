@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import Instance from "../AxiosConfig";
+import html2canvas from "html2canvas";
+import backimg from "@/assets/logo.png";
 import {
   Scale,
   BookOpen,
@@ -855,12 +857,23 @@ interface FormData {
   imageFile?: File;
 }
 
+interface UserCardData {
+  name: string;
+  father: string;
+  mobile: string;
+  receiptNumber: string;
+  image: string;
+}
+
 export default function MembershipPage() {
   const [submitted, setSubmitted] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isValid, setIsValid] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  const cardRef = useRef<HTMLDivElement | null>(null);
+  const [userData, setUserData] = useState<UserCardData | null>(null);
   const [form, setForm] = useState<FormData>({
     memberName: "",
     fatherName: "",
@@ -894,6 +907,21 @@ export default function MembershipPage() {
     setSelectedVidhansabha(vidhansabha);
     // Optional: data को filter करें getData() में vidhansabha param add करके
   }, []);
+
+  const downloadCard = async () => {
+    if (!cardRef.current) return;
+
+    const canvas = await html2canvas(cardRef.current, {
+      useCORS: true,
+      scale: 2,
+      backgroundColor: "#ffffff",
+    });
+
+    const link = document.createElement("a");
+    link.download = "id-card.png";
+    link.href = canvas.toDataURL("image/png");
+    link.click();
+  };
 
   // paste.txt में STATESDISTRICTS के बाद ये add करें
   const VIDHANSHABHAS = [
@@ -1481,7 +1509,7 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
             formData.append("state", form.state);
             formData.append("district", form.district);
             formData.append("vidhansabha", selectedVidhansabha);
-            formData.append("membershipFee", 251);
+            formData.append("membershipFee", "251");
             formData.append("razorpay_payment_id", response.razorpay_payment_id); // ✅ ADD YE
             formData.append("razorpay_order_id", response.razorpay_order_id);     // ✅ ADD YE
   
@@ -1505,6 +1533,20 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   
             console.log("✅ Backend Success:", res.data);
             console.log(res);
+
+            const receiptNumber = String(
+              res?.data?.receiptNumber ?? res?.data?.memberId ?? "",
+            );
+            const previewImage =
+              imagePreview ||
+              (form.imageFile ? URL.createObjectURL(form.imageFile) : "");
+            setUserData({
+              name: form.memberName,
+              father: form.fatherName,
+              mobile: form.mobile,
+              receiptNumber,
+              image: previewImage,
+            });
             
             setSubmitted(true);
             setIsValid(true);
@@ -1543,11 +1585,6 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
             
             const imageInput = document.getElementById("imageInput");
             if (imageInput instanceof HTMLInputElement) imageInput.value = "";
-            
-            setTimeout(() => {
-              setSubmitted(false);
-              setIsValid(false);
-            }, 3000);
   
           } catch (backendError) {
             console.error("❌ Backend Registration Failed:", backendError);
@@ -1651,8 +1688,8 @@ rzp.open();
         <SectionHeader title="ऑनलाइन पंजीकरण" />
 
         {submitted ? (
-          <div className="bg-white rounded-2xl p-12 text-center border border-[#e8dfd0]">
-            <div className="w-[72px] h-[72px] rounded-full bg-[#fff4df] flex items-center justify-center mx-auto mb-5">
+          <div className="bg-white rounded-2xl p-8 text-center border border-[#e8dfd0]">
+            <div className="w-[72px] h-[72px] rounded-full bg-[#fff4df] flex items-center justify-center mx-auto">
               <BadgeCheck size={36} color="#f4a92a" />
             </div>
             <h3 className="m-0 mb-2 text-xl font-extrabold text-[#0f1d3a]">
@@ -1661,11 +1698,81 @@ rzp.open();
             <p className="text-gray-500 mb-7">
               आपका आवेदन प्राप्त हो गया है। जल्द ही संपर्क किया जाएगा।
             </p>
+
+            {userData && (
+  <div className="text-center mt-6">
+    
+    <div
+  ref={cardRef}
+  className="w-[330px] mx-auto rounded-xl shadow-lg overflow-hidden border border-gray-200 relative bg-white flex flex-col h-[450px]"
+>
+  {/* 🔥 BACKGROUND */}
+  <div
+    className="absolute inset-0 bg-center bg-no-repeat bg-contain opacity-25"
+    style={{ backgroundImage: `url(${backimg})` }}
+  ></div>
+
+  {/* HEADER */}
+  <div className="bg-orange-500 text-white py-2 font-bold text-center relative z-10">
+    अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
+  </div>
+
+  {/* BODY (flex grow karega) */}
+  <div className="p-4 text-center relative z-10 flex-1 flex flex-col justify-center items-center">
+
+  {/* 🔥 TOP LOGO (100x100) */}
+  <img
+    src={backimg}
+    alt="logo"
+    className="w-[80px] h-[80px] object-contain mb-2 mt-[-45px]"
+  />
+
+  {/* USER IMAGE */}
+  <img
+    src={userData.image}
+    alt="Member"
+    className="w-24 h-24 rounded-md border-2 border-red-500 object-cover"
+  />
+
+  <h2 className="text-blue-700 font-bold mt-2">
+    {userData.name}
+  </h2>
+
+  <p className="text-sm">(जिला अध्यक्ष)</p>
+
+  <div className="text-left mt-3 text-sm w-full">
+    <p><b>ID No:</b> {userData.receiptNumber}</p>
+    <p><b>पिता:</b> {userData.father}</p>
+    <p><b>मोबाइल:</b> {userData.mobile}</p>
+  </div>
+
+</div>
+
+  {/* FOOTER (bottom me stick) */}
+  <div className="bg-orange-500 text-white py-1 text-center relative z-10">
+    Help Line No: 09549560000
+  </div>
+</div>
+
+    {/* DOWNLOAD BUTTON */}
+    <button
+      type="button"
+      onClick={downloadCard}
+      className="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
+    >
+      Download as PNG
+    </button>
+
+  </div>
+)}
+
             <button
               onClick={() => {
                 setSubmitted(false);
+                setIsValid(false);
+                setUserData(null);
               }}
-              className="bg-[#0f1d3a] text-white px-6 py-3 rounded-lg font-semibold"
+              className="bg-[#0f1d3a] text-white px-6 py-3 rounded-lg font-semibold mt-6"
             >
               नया पंजीकरण करें
             </button>
