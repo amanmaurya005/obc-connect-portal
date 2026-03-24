@@ -21,7 +21,8 @@ const corsOptions = {
     "http://localhost:3000",
     "http://localhost:5173",
     "https://www.obcmahasabha.co.in",
-    "https://obcmahasabha.co.in"
+    "https://obcmahasabha.co.in",
+    "https://obc-connect-portal-1.onrender.com"
   ],
   credentials: true,
   methods: ["GET", "POST", "PUT", "DELETE", "OPTIONS"],
