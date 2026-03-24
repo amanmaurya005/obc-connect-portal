@@ -29,11 +29,11 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-// ✅ Database connection (with error handling)
+// ✅ Database connection
 try {
   await connectDB();
 } catch (error) {
-  console.error("Failed to connect to database:", error.message);
+  console.error("❌ Failed to connect to database:", error.message);
 }
 
 // ✅ Routes
@@ -43,7 +43,7 @@ app.use("/api/donations", donationRoute);
 // ✅ Health check route
 app.get("/api", (req, res) => {
   res.json({
-    message: "API is running on Vercel!",
+    message: "API is running on Render 🚀",
     status: "healthy",
     timestamp: new Date().toISOString(),
     environment: process.env.NODE_ENV || "development"
@@ -62,21 +62,16 @@ app.use((req, res) => {
 
 // ✅ Error handler
 app.use((err, req, res, next) => {
-  console.error("Server error:", err);
-  res.status(500).json({ 
+  console.error("🔥 Server error:", err);
+  res.status(500).json({
     error: "Internal server error",
-    message: err.message 
+    message: err.message
   });
 });
 
-// ✅ Local development
-if (process.env.NODE_ENV !== "production") {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => {
-    console.log(`🚀 Local server running on http://localhost:${PORT}`);
-    console.log(`📝 API available at http://localhost:${PORT}/api`);
-  });
-}
+// ✅ IMPORTANT: Render ke liye server start (FIXED)
+const PORT = process.env.PORT || 3000;
 
-// ✅ Export for Vercel
-export default app;
+app.listen(PORT, () => {
+  console.log(`🚀 Server running on port ${PORT}`);
+});
