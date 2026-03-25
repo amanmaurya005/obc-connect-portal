@@ -1,9 +1,13 @@
-name: Azure Static Web Apps CI/CD
+name: obc-mahasabha-frontend
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'Frontend/**'
+      - '.github/workflows/azure-static-web-apps-purple-dune-0cc8acf00.yml'
+  workflow_dispatch:
 
 jobs:
   build_and_deploy_job:
@@ -18,6 +22,8 @@ jobs:
       - name: Build And Deploy
         id: builddeploy
         uses: Azure/static-web-apps-deploy@v1
+        env:
+          VITE_BACKEND_URL: ${{ vars.VITE_BACKEND_URL }}
         with:
           azure_static_web_apps_api_token: ${{ secrets.AZURE_STATIC_WEB_APPS_API_TOKEN_PURPLE_DUNE_0CC8ACF00 }}
           repo_token: ${{ secrets.GITHUB_TOKEN }} # Used for Github integrations (i.e. PR comments)

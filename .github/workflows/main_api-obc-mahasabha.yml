@@ -1,14 +1,16 @@
 # Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
 # More GitHub Actions for Azure: https://github.com/Azure/actions
 
-name: Build and deploy Node.js app to Azure Web App - api-obc-mahasabha
+name: api-obc-mahasabha
 
 on:
   push:
     branches:
       - main
+    paths:
+      - 'Backend/**'
+      - '.github/workflows/main_api-obc-mahasabha.yml'
   workflow_dispatch:
-
 jobs:
   build:
     runs-on: ubuntu-latest
