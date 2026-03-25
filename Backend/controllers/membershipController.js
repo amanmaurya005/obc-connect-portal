@@ -2,6 +2,7 @@ import Membership from "../models/membershipModel.js";
 import sgMail from "@sendgrid/mail";
 import dotenv from "dotenv";
 import Razorpay from "razorpay";
+import crypto from "crypto";
 
 dotenv.config();
 
@@ -55,24 +56,97 @@ export const createOrder = async (req, res) => {
   }
 };
 
-export const createMembership = async (req, res) => {
+export const verifyPayment = async (req, res) => {
   try {
+    const {
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    } = req.body;
+
+    // 🔥 STEP 1: VERIFY SIGNATURE
+    const body = razorpay_order_id + "|" + razorpay_payment_id;
+
+    const expectedSignature = crypto
+      .createHmac("sha256", process.env.RAZORPAY_KEY_SECRET)
+      .update(body)
+      .digest("hex");
+
+    if (expectedSignature !== razorpay_signature) {
+      return res.status(400).json({
+        success: false,
+        message: "Payment verification failed ❌",
+      });
+    }
+
+    console.log("✅ Payment Verified for Order:", razorpay_order_id);
+    console.log("Payment ID:", razorpay_payment_id);
+
+    // 🔥 STEP 2: UPDATE MEMBERSHIP IF EXISTS (in case it was created first)
+    // But since we're creating membership after verification, we just return success
+    // with payment details that will be used in /register
+
+    return res.json({
+      success: true,
+      message: "Payment verified successfully",
+      paymentId: razorpay_payment_id,
+      orderId: razorpay_order_id
+    });
+
+  } catch (error) {
+    console.log("Verification Error:", error);
+    res.status(500).json({ error: error.message });
+  }
+};
+
+
+const getCode = (text) => {
+  if (!text) return "";
+  return text.replace(/[^a-zA-Z]/g, "").substring(0, 2).toUpperCase();
+};
+
+
+export const createMembership = async (req, res) => {
+  try { 
     console.log("BODY:", req.body);
     console.log("FILE:", req.file);
+    console.log("Payment ID from form:", req.body.razorpay_payment_id);
+    console.log("Order ID from form:", req.body.razorpay_order_id);
 
-    // const lastMember = await Membership.findOne().sort({ receiptNumber: -1 });
-    const lastMember = await Membership.findOne(
-      {},
-      {},
-      { sort: { receiptNumber: -1 } },
-    );
+    // ✅ FIRST declare payment variables
+    const razorpayPaymentId = req.body.razorpay_payment_id;
+    const razorpayOrderId = req.body.razorpay_order_id;
+    const paymentStatus = razorpayPaymentId ? "success" : "pending";
 
+    console.log("💰 Payment Details:", {
+      razorpayPaymentId,
+      razorpayOrderId,
+      paymentStatus
+    });
+
+    // ✅ NOW check if payment ID exists
+    if (!razorpayPaymentId) {
+      console.error("❌ Missing payment ID!");
+      return res.status(400).json({
+        success: false,
+        message: "Payment ID is required"
+      });
+    }
+
+    // Get last receipt number
+    const lastMember = await Membership.findOne({}, {}, { sort: { receiptNumber: -1 } });
     let newReceiptNumber = 1;
 
     if (lastMember && lastMember.receiptNumber) {
       newReceiptNumber = lastMember.receiptNumber + 1;
     }
-    // ✅ Added required field validation
+
+    const stateCode = getCode(req.body.state);     
+    const districtCode = getCode(req.body.district);
+    const formattedNumber = String(newReceiptNumber).padStart(4, "0");
+    const memberId = `${stateCode}${districtCode}${formattedNumber}`;
+    
+    // Required field validation
     const requiredFields = [
       "memberName",
       "fatherName",
@@ -89,7 +163,6 @@ export const createMembership = async (req, res) => {
     }
 
     let imagePath = null;
-
     if (req.file) {
       imagePath = req.file.path;
     } else if (req.body.image) {
@@ -98,7 +171,7 @@ export const createMembership = async (req, res) => {
 
     console.log("Image:", imagePath);
 
-    // ✅ PAN validation
+    // PAN validation
     if (req.body.pan && req.body.pan.length !== 10) {
       return res.status(400).json({
         success: false,
@@ -107,7 +180,15 @@ export const createMembership = async (req, res) => {
     }
 
     const membership = new Membership({
+      // 🔥 PAYMENT FIELDS
+      razorpayPaymentId: razorpayPaymentId,
+      razorpayOrderId: razorpayOrderId,
+      paymentStatus: paymentStatus,
+      paymentDate: razorpayPaymentId ? new Date() : null,
+
+      memberId: memberId,
       receiptNumber: newReceiptNumber,
+      membershipFee: req.body.membershipFee ? parseInt(req.body.membershipFee) : 251,
 
       memberName: req.body.memberName,
       fatherName: req.body.fatherName,
@@ -125,25 +206,35 @@ export const createMembership = async (req, res) => {
       education: req.body.education,
       otherEducation: req.body.otherEducation,
       dob: req.body.dob ? new Date(req.body.dob) : null,
-      marriageDate: req.body.marriageDate
-        ? new Date(req.body.marriageDate)
-        : null, // ✅ Fixed null check
+      marriageDate: req.body.marriageDate ? new Date(req.body.marriageDate) : null,
       bloodGroup: req.body.bloodGroup,
       tshirtSize: req.body.tshirtSize,
       socialWork: req.body.socialWork,
       specialAchievement: req.body.specialAchievement,
       membershipType: req.body.membershipType,
-      membershipFee: req.body.membershipFee
-        ? parseInt(req.body.membershipFee)
-        : 251,
       state: req.body.state,
       district: req.body.district,
       vidhansabha: req.body.vidhansabha,
       image: req.file?.path || req.body.image,
     });
-    console.log(req.file?.path);
+    
+    console.log("📝 Membership object created with payment:", {
+      hasPaymentId: !!membership.razorpayPaymentId,
+      paymentStatus: membership.paymentStatus
+    });
 
     await membership.save();
+  
+    console.log("✅ Membership saved successfully!");
+    console.log("🔍 Final saved data:", {
+      memberId: membership.memberId,
+      receiptNumber: membership.receiptNumber,
+      paymentStatus: membership.paymentStatus,
+      razorpayPaymentId: membership.razorpayPaymentId,
+      razorpayOrderId: membership.razorpayOrderId
+    });
+
+
 
     const amount = req.body.membershipFee || 251;
     const amountWords = numberToHindiWords(amount);
@@ -343,9 +434,13 @@ export const createMembership = async (req, res) => {
 
     return res.status(201).json({
       success: true,
-      message: "Membership saved and admin notified successfully",
-      data: membership,
+      message: "Membership saved successfully",
+      memberId: membership.memberId,
+      receiptNumber: membership.receiptNumber,
+     paymentStatus: paymentStatus,
+      paymentId: razorpayPaymentId
     });
+
   } catch (error) {
     console.error("Error:", error.response?.body || error.message);
 

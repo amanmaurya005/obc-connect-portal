@@ -1465,10 +1465,7 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
     setLoading(true);
   
     try {
-     
-      const { data } = await Instance.post(
-        "/api/membership/create-order",
-      );
+      const { data } = await Instance.post("/api/membership/create-order");
   
       const options = {
         key: data.key,
@@ -1481,77 +1478,88 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
         handler: async function (response) {
           try {
             console.log("✅ Payment Success:", response);
-            
-            // 2️⃣ FormData create
-            const formData = new FormData();
-            formData.append("memberName", form.memberName);
-            formData.append("fatherName", form.fatherName);
-            formData.append("businessNature", form.businessNature);
-            formData.append("organizationPosition", form.organizationPosition);
-            formData.append("residenceAddress", form.residenceAddress);
-            formData.append("officeAddress", form.officeAddress);
-            formData.append("residencePhone", form.residencePhone);
-            formData.append("officePhone", form.officePhone);
-            formData.append("mobile", form.mobile);
-            formData.append("whatsapp", form.whatsapp);
-            formData.append("email", form.email);
-            formData.append("pan", form.pan);
-            formData.append("aadhaar", form.aadhaar);
-            formData.append("education", form.education);
-            formData.append("otherEducation", form.otherEducation);
-            formData.append("dob", form.dob);
-            formData.append("marriageDate", form.marriageDate || "");
-            formData.append("bloodGroup", form.bloodGroup);
-            formData.append("tshirtSize", form.tshirtSize);
-            formData.append("socialWork", form.socialWork);
-            formData.append("specialAchievement", form.specialAchievement);
-            formData.append("membershipType", form.membershipType);
-            formData.append("state", form.state);
-            formData.append("district", form.district);
-            formData.append("vidhansabha", selectedVidhansabha);
-            formData.append("membershipFee", "251");
-            formData.append("razorpay_payment_id", response.razorpay_payment_id); // ✅ ADD YE
-            formData.append("razorpay_order_id", response.razorpay_order_id);     // ✅ ADD YE
   
+            // STEP 1: Verify payment with JSON (NOT FormData)
+            const verifyRes = await Instance.post("/api/membership/verify-payment", {
+              razorpay_order_id: response.razorpay_order_id,
+              razorpay_payment_id: response.razorpay_payment_id,
+              razorpay_signature: response.razorpay_signature,
+              // Don't send formData here - your backend doesn't need it in verify endpoint
+            });
+  
+            console.log("✅ Payment verified:", verifyRes.data);
+  
+            // STEP 2: Register member with FormData (includes all form data + image)
+            const formDataToSend = new FormData();
+            formDataToSend.append("memberName", form.memberName);
+            formDataToSend.append("fatherName", form.fatherName);
+            formDataToSend.append("businessNature", form.businessNature);
+            formDataToSend.append("organizationPosition", form.organizationPosition);
+            formDataToSend.append("residenceAddress", form.residenceAddress);
+            formDataToSend.append("officeAddress", form.officeAddress);
+            formDataToSend.append("residencePhone", form.residencePhone);
+            formDataToSend.append("officePhone", form.officePhone);
+            formDataToSend.append("mobile", form.mobile);
+            formDataToSend.append("whatsapp", form.whatsapp);
+            formDataToSend.append("email", form.email);
+            formDataToSend.append("pan", form.pan);
+            formDataToSend.append("aadhaar", form.aadhaar);
+            formDataToSend.append("education", form.education);
+            formDataToSend.append("otherEducation", form.otherEducation);
+            formDataToSend.append("dob", form.dob);
+            formDataToSend.append("marriageDate", form.marriageDate || "");
+            formDataToSend.append("bloodGroup", form.bloodGroup);
+            formDataToSend.append("tshirtSize", form.tshirtSize);
+            formDataToSend.append("socialWork", form.socialWork);
+            formDataToSend.append("specialAchievement", form.specialAchievement);
+            formDataToSend.append("membershipType", form.membershipType);
+            formDataToSend.append("state", form.state);
+            formDataToSend.append("district", form.district);
+            formDataToSend.append("vidhansabha", selectedVidhansabha);
+            formDataToSend.append("membershipFee", "251");
+            formDataToSend.append("razorpay_payment_id", response.razorpay_payment_id);
+            formDataToSend.append("razorpay_order_id", response.razorpay_order_id);
+  
+            // Add image file
             if (form.imageFile) {
-              formData.append("imageFile", form.imageFile);
+              formDataToSend.append("imageFile", form.imageFile);
             }
   
-            console.log("📤 Sending form data to backend...");
+            console.log("📤 Sending registration data to backend...");
   
-            // 3️⃣ Save Membership
-            const res = await Instance.post(
+            const registerRes = await Instance.post(
               "/api/membership/register",
-              formData,
+              formDataToSend,
               {
                 headers: {
                   "Content-Type": "multipart/form-data",
                 },
-                timeout: 30000, // 30 sec timeout
+                timeout: 30000,
               }
             );
   
-            console.log("✅ Backend Success:", res.data);
-            console.log(res);
-
-            const receiptNumber = String(
-              res?.data?.receiptNumber ?? res?.data?.memberId ?? "",
-            );
+            const memberId = registerRes?.data?.memberId;
+  
+            if (!memberId) {
+              throw new Error("Member ID not received");
+            }
+  
             const previewImage =
               imagePreview ||
               (form.imageFile ? URL.createObjectURL(form.imageFile) : "");
+  
             setUserData({
               name: form.memberName,
               father: form.fatherName,
               mobile: form.mobile,
-              receiptNumber,
+              receipt: memberId,
               image: previewImage,
             });
-            
+  
             setSubmitted(true);
             setIsValid(true);
-
-            // Reset form to initial state
+  
+            // Reset form
             setForm({
               memberName: "",
               fatherName: "",
@@ -1579,37 +1587,37 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
               otherEducation: "",
               imageFile: undefined,
             });
+  
             setSelectedVidhansabha("");
             setImagePreview("");
             setErrors({});
-            
+  
             const imageInput = document.getElementById("imageInput");
             if (imageInput instanceof HTMLInputElement) imageInput.value = "";
   
-          } catch (backendError) {
-            console.error("❌ Backend Registration Failed:", backendError);
-            alert(`Registration failed: ${backendError.response?.data?.error || backendError.message || 'Server error'}`);
+            alert("✅ Membership registered successfully!");
+  
+          } catch (error) {
+            console.error("❌ Error:", error);
+            alert(`Payment verification failed: ${error.response?.data?.error || error.message}`);
           }
         },
   
-        // ❌ Payment fdler
         modal: {
-          ondismiss: function() {
+          ondismiss: function () {
             console.log("❌ Payment cancelled by user");
             alert("Payment cancelled");
-          }
-        }
+          },
+        },
       };
   
-      // Razorpay SDK checkail han
-if (!window.Razorpay) {
-  alert("Razorpay SDK failed to load.");
-  return;
-}
-
-const rzp = new window.Razorpay(options);
-rzp.open();
+      if (!window.Razorpay) {
+        alert("Razorpay SDK failed to load.");
+        return;
+      }
   
+      const rzp = new window.Razorpay(options);
+      rzp.open();
     } catch (error) {
       console.error("❌ Razorpay Error:", error);
       alert("Payment initialization failed: " + error.message);
@@ -1699,73 +1707,6 @@ rzp.open();
               आपका आवेदन प्राप्त हो गया है। जल्द ही संपर्क किया जाएगा।
             </p>
 
-            {userData && (
-  <div className="text-center mt-6">
-    
-    <div
-  ref={cardRef}
-  className="w-[330px] mx-auto rounded-xl shadow-lg overflow-hidden border border-gray-200 relative bg-white flex flex-col h-[450px]"
->
-  {/* 🔥 BACKGROUND */}
-  <div
-    className="absolute inset-0 bg-center bg-no-repeat bg-contain opacity-25"
-    style={{ backgroundImage: `url(${backimg})` }}
-  ></div>
-
-  {/* HEADER */}
-  <div className="bg-orange-500 text-white py-2 font-bold text-center relative z-10">
-    अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
-  </div>
-
-  {/* BODY (flex grow karega) */}
-  <div className="p-4 text-center relative z-10 flex-1 flex flex-col justify-center items-center">
-
-  {/* 🔥 TOP LOGO (100x100) */}
-  <img
-    src={backimg}
-    alt="logo"
-    className="w-[80px] h-[80px] object-contain mb-2 mt-[-45px]"
-  />
-
-  {/* USER IMAGE */}
-  <img
-    src={userData.image}
-    alt="Member"
-    className="w-24 h-24 rounded-md border-2 border-red-500 object-cover"
-  />
-
-  <h2 className="text-blue-700 font-bold mt-2">
-    {userData.name}
-  </h2>
-
-  <p className="text-sm">(जिला अध्यक्ष)</p>
-
-  <div className="text-left mt-3 text-sm w-full">
-    <p><b>ID No:</b> {userData.receiptNumber}</p>
-    <p><b>पिता:</b> {userData.father}</p>
-    <p><b>मोबाइल:</b> {userData.mobile}</p>
-  </div>
-
-</div>
-
-  {/* FOOTER (bottom me stick) */}
-  <div className="bg-orange-500 text-white py-1 text-center relative z-10">
-    Help Line No: 09549560000
-  </div>
-</div>
-
-    {/* DOWNLOAD BUTTON */}
-    <button
-      type="button"
-      onClick={downloadCard}
-      className="mt-4 px-4 py-2 bg-gray-200 rounded hover:bg-gray-300 transition-colors"
-    >
-      Download as PNG
-    </button>
-
-  </div>
-)}
-
             <button
               onClick={() => {
                 setSubmitted(false);
@@ -1776,7 +1717,152 @@ rzp.open();
             >
               नया पंजीकरण करें
             </button>
-          </div>
+
+
+            {userData && (
+  <div className="flex flex-col items-center mt-8">
+ 
+    {/* ── CARD ── */}
+    <div
+      id="id-card-capture"
+      ref={cardRef}
+      className="relative w-[320px] bg-white flex flex-col overflow-hidden"
+      style={{ borderRadius: "12px", boxShadow: "0 6px 32px rgba(0,0,0,0.15)", border: "1px solid #e5e7eb" }}
+    >
+ 
+      {/* ── FULL CARD WATERMARK BACKGROUND ── */}
+      <div
+        className="absolute inset-0 pointer-events-none z-0"
+        style={{
+          backgroundImage: `url(${backimg})`,
+          backgroundSize: "65%",
+          backgroundPosition: "center",
+          backgroundRepeat: "no-repeat",
+          opacity: 0.06,
+        }}
+      />
+ 
+      {/* ── HEADER with wave bottom ── */}
+      <div className="relative z-10 w-full" style={{ background: "#f97316" }}>
+        {/* Header text */}
+        <div className="px-4 pt-3 pb-7 text-center">
+          <p className="text-white font-extrabold text-[15px] m-0 leading-snug tracking-wide drop-shadow-sm">
+            अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
+          </p>
+        </div>
+ 
+        {/* Wave SVG */}
+        <div className="absolute bottom-0 left-0 right-0" style={{ lineHeight: 0 }}>
+          <svg
+            viewBox="0 0 320 28"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-full"
+            style={{ display: "block", height: "28px" }}
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M0,14 C53,28 107,0 160,14 C213,28 267,0 320,14 L320,28 L0,28 Z"
+              fill="#ffffff"
+            />
+          </svg>
+        </div>
+      </div>
+ 
+      {/* ── BODY ── */}
+      <div className="relative z-10 flex flex-col items-center px-6 pt-2 pb-4 bg-white">
+ 
+        {/* Logo */}
+        <img
+          src={backimg}
+          alt="logo"
+          className="w-[58px] h-[58px] object-contain mb-3"
+        />
+ 
+        {/* Member Photo */}
+        <div
+          className="border-2 border-red-500 mb-3"
+          style={{ borderRadius: "4px", padding: "2px" }}
+        >
+          <img
+            src={userData.image}
+            alt="Member"
+            className="w-[100px] h-[110px] object-cover block"
+            style={{ borderRadius: "2px" }}
+          />
+        </div>
+ 
+        {/* Name */}
+        <p
+          className="text-blue-700 font-extrabold text-[17px] text-center m-0 mb-0.5"
+          style={{ fontFamily: "'Noto Sans Devanagari','Mangal',sans-serif" }}
+        >
+          {userData.name}
+        </p>
+ 
+        {/* Designation */}
+        <p className="text-gray-500 text-[13px] text-center m-0 mb-4">
+          (जिला अध्यक्ष)
+        </p>
+ 
+        {/* Divider */}
+        <div className="w-full h-px bg-orange-100 mb-3" />
+ 
+        {/* Info rows */}
+        <div className="w-full flex flex-col gap-[7px] px-1">
+          {[
+            { label: "ID No", value: userData.receipt },
+            { label: "पिता नाम",       value: userData.father },
+            { label: "मोबाइल नं",  value: userData.mobile },
+          ].map(({ label, value }) => (
+            <div key={label} className="flex items-start text-[13px]">
+              <span className="text-gray-800 font-semibold w-[90px] shrink-0">{label}</span>
+              <span className="text-gray-600 mr-2 font-medium">:</span>
+              <span className="text-gray-700">{value}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+ 
+      {/* ── FOOTER with wave top ── */}
+      <div className="relative z-10 w-full" style={{ background: "#f97316" }}>
+        {/* Wave SVG top */}
+        <div className="w-full" style={{ lineHeight: 0 }}>
+          <svg
+            viewBox="0 0 320 28"
+            xmlns="http://www.w3.org/2000/svg"
+            className="w-full"
+            style={{ display: "block", height: "28px" }}
+            preserveAspectRatio="none"
+          >
+            <path
+              d="M0,14 C53,0 107,28 160,14 C213,0 267,28 320,14 L320,0 L0,0 Z"
+              fill="#ffffff"
+            />
+          </svg>
+        </div>
+ 
+        {/* Footer text */}
+        <div className="px-3 pb-3 text-center">
+          <p className="text-white font-bold text-[13px] m-0 tracking-wide">
+            Help Line No.: 09549560000
+          </p>
+        </div>
+      </div>
+ 
+    </div>
+ 
+    {/* ── DOWNLOAD BUTTON ── */}
+    <button
+      type="button"
+      onClick={downloadCard}
+      className="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md active:scale-95 transition-all duration-200 border-0 cursor-pointer"
+    >
+      ⬇️ Download ID Card PNG
+    </button>
+ 
+  </div>
+)}
+ </div>
         ) : (
           <div className="bg-white rounded-lg p-6 md:p-10 shadow-lg">
             <form onSubmit={handleSubmit}>

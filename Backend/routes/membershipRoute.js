@@ -1,6 +1,6 @@
 import express from "express";
 import { uploadCloud } from "../middleware/cloudinaryUpload.js"
-import { createMembership, createOrder, getAllMemberships, getSingleMembership } from "../controllers/membershipController.js";
+import { createMembership, createOrder, getAllMemberships, getSingleMembership,verifyPayment  } from "../controllers/membershipController.js";
 
 const router = express.Router();
 
@@ -9,5 +9,8 @@ router.get("/", getAllMemberships);
 router.get("/:id", getSingleMembership);  
 
 router.post("/create-order", createOrder);
+router.post("/verify-payment", verifyPayment);
+
+
 
 export default router;

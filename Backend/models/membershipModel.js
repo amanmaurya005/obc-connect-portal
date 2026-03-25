@@ -2,6 +2,29 @@ import mongoose from "mongoose";
 
 const membershipSchema = new mongoose.Schema({
 
+  razorpayPaymentId: {
+    type: String,
+    sparse: true,
+    index: true
+  },
+  razorpayOrderId: {
+    type: String,
+    sparse: true
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['pending', 'success', 'failed'],
+    default: 'pending'
+  },
+  paymentDate: {
+    type: Date
+  },
+
+  memberId: {
+    type: String,
+    required: true,
+  },
+
   receiptNumber: {
     type: Number,
     required: true,
