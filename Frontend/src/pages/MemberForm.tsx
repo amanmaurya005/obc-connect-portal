@@ -861,16 +861,22 @@ interface UserCardData {
   name: string;
   father: string;
   mobile: string;
-  receiptNumber: string;
+  receipt: string;
   image: string;
 }
 
 export default function MembershipPage() {
   const [submitted, setSubmitted] = useState(false);
+  const [showSuccessMessage, setShowSuccessMessage] = useState(false);
+  const [showLoading, setShowLoading] = useState(false);
+  const [showIdCard, setShowIdCard] = useState(false);
+  const [timerId, setTimerId] = useState<number | null>(null);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [imagePreview, setImagePreview] = useState<string>("");
   const [isValid, setIsValid] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [receiptData, setReceiptData] = useState(null);
+const [showReceipt, setShowReceipt] = useState(false);
 
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [userData, setUserData] = useState<UserCardData | null>(null);
@@ -902,6 +908,13 @@ export default function MembershipPage() {
     imageFile: undefined,
   });
 
+  // Cleanup any pending timeouts on unmount.
+  useEffect(() => {
+    return () => {
+      if (timerId) window.clearTimeout(timerId);
+    };
+  }, [timerId]);
+
   const [selectedVidhansabha, setSelectedVidhansabha] = useState("");
   const handleVidhansabhaSelect = useCallback((vidhansabha: string) => {
     setSelectedVidhansabha(vidhansabha);
@@ -921,6 +934,137 @@ export default function MembershipPage() {
     link.download = "id-card.png";
     link.href = canvas.toDataURL("image/png");
     link.click();
+  };
+
+  const downloadReceipt = async () => {
+    const element = document.getElementById("receipt-capture");
+    if (!element) return;
+  
+    try {
+      const canvas = await html2canvas(element, {
+        scale: 2,
+        backgroundColor: "#f38cb4",
+        logging: false,
+      });
+      
+      const link = document.createElement("a");
+      link.download = `receipt_${receiptData.receiptNumber}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+      
+      alert("✅ रसीद डाउनलोड हो गई!");
+    } catch (error) {
+      console.error("Error downloading receipt:", error);
+      alert("रसीद डाउनलोड करने में त्रुटि हुई");
+    }
+  };
+
+  const numberToHindiWords = (n: unknown) => {
+    const num = Number(n);
+    if (!Number.isFinite(num)) return "";
+    return `${num}`;
+  };
+
+  // Sequential success -> loading -> ID card flow
+  const handleSuccessfulRegistration = async (
+    memberId: string,
+    userDataForCard: UserCardData
+  ) => {
+    if (timerId) window.clearTimeout(timerId);
+  
+    try {
+      // 🔥 Fetch receipt data from backend
+      const receiptResponse = await Instance.get(`/api/membership/receipt/${memberId}`);
+      setReceiptData(receiptResponse.data);
+      
+      // Start flow immediately
+      setShowSuccessMessage(true);
+      setSubmitted(true);
+      setShowLoading(false);
+      setShowIdCard(false);
+      setUserData(null);
+      setShowReceipt(false);
+  
+      const id1 = window.setTimeout(() => {
+        setShowSuccessMessage(false);
+        setShowLoading(true);
+  
+        const id2 = window.setTimeout(() => {
+          setShowLoading(false);
+          setUserData(userDataForCard);
+          setShowIdCard(true);
+          
+          // 🔥 After ID card shows, show receipt modal after 1 second
+          const id3 = window.setTimeout(() => {
+            setShowReceipt(true);
+          }, 1000);
+          
+          setTimerId(id3);
+        }, 1000);
+  
+        setTimerId(id2);
+      }, 3000);
+  
+      setTimerId(id1);
+      
+    } catch (error) {
+      console.error("Error fetching receipt:", error);
+      // Continue without receipt if error
+      // Start flow without receipt
+      setShowSuccessMessage(true);
+      setSubmitted(true);
+      // ... rest of the flow
+    }
+  };
+
+  // Reset everything function
+  const resetForm = () => {
+    if (timerId) window.clearTimeout(timerId);
+    setTimerId(null);
+
+    setShowSuccessMessage(false);
+    setShowLoading(false);
+    setShowIdCard(false);
+    setSubmitted(false);
+    setIsValid(false);
+    setUserData(null);
+    setLoading(false);
+
+    // Reset form data
+    setForm({
+      memberName: "",
+      fatherName: "",
+      businessNature: "",
+      organizationPosition: "",
+      residenceAddress: "",
+      officeAddress: "",
+      residencePhone: "",
+      officePhone: "",
+      mobile: "",
+      whatsapp: "",
+      email: "",
+      pan: "",
+      aadhaar: "",
+      education: "",
+      otherEducation: "",
+      dob: "",
+      marriageDate: "",
+      bloodGroup: "",
+      tshirtSize: "",
+      socialWork: "",
+      specialAchievement: "",
+      membershipType: "life",
+      state: "",
+      district: "",
+      imageFile: undefined,
+    });
+
+    setSelectedVidhansabha("");
+    setImagePreview("");
+    setErrors({});
+
+    const imageInput = document.getElementById("imageInput");
+    if (imageInput instanceof HTMLInputElement) imageInput.value = "";
   };
 
   // paste.txt में STATESDISTRICTS के बाद ये add करें
@@ -1548,16 +1692,15 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
               imagePreview ||
               (form.imageFile ? URL.createObjectURL(form.imageFile) : "");
   
-            setUserData({
+            const userDataForCard: UserCardData = {
               name: form.memberName,
               father: form.fatherName,
               mobile: form.mobile,
               receipt: memberId,
               image: previewImage,
-            });
-  
-            setSubmitted(true);
-            setIsValid(true);
+            };
+
+            handleSuccessfulRegistration(memberId, userDataForCard);
   
             // Reset form
             setForm({
@@ -1594,8 +1737,6 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   
             const imageInput = document.getElementById("imageInput");
             if (imageInput instanceof HTMLInputElement) imageInput.value = "";
-  
-            alert("✅ Membership registered successfully!");
   
           } catch (error) {
             console.error("❌ Error:", error);
@@ -1697,172 +1838,336 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
 
         {submitted ? (
           <div className="bg-white rounded-2xl p-8 text-center border border-[#e8dfd0]">
-            <div className="w-[72px] h-[72px] rounded-full bg-[#fff4df] flex items-center justify-center mx-auto">
-              <BadgeCheck size={36} color="#f4a92a" />
-            </div>
-            <h3 className="m-0 mb-2 text-xl font-extrabold text-[#0f1d3a]">
-              पंजीकरण सफल!
-            </h3>
-            <p className="text-gray-500 mb-7">
-              आपका आवेदन प्राप्त हो गया है। जल्द ही संपर्क किया जाएगा।
-            </p>
+            {showSuccessMessage && (
+              <div>
+                <div className="w-[72px] h-[72px] rounded-full bg-[#fff4df] flex items-center justify-center mx-auto">
+                  <BadgeCheck size={36} color="#f4a92a" />
+                </div>
+                <h3 className="m-0 mb-2 text-xl font-extrabold text-[#0f1d3a]">
+                  पंजीकरण सफल!
+                </h3>
+                <p className="text-gray-500 mb-7">
+                  आपका आवेदन प्राप्त हो गया है। जल्द ही संपर्क किया जाएगा।
+                </p>
 
-            <button
-              onClick={() => {
-                setSubmitted(false);
-                setIsValid(false);
-                setUserData(null);
-              }}
-              className="bg-[#0f1d3a] text-white px-6 py-3 rounded-lg font-semibold mt-6"
-            >
-              नया पंजीकरण करें
-            </button>
+                <button
+                  disabled
+                  className="bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold mt-6 cursor-not-allowed"
+                >
+                  नया पंजीकरण करें
+                </button>
+              </div>
+            )}
+{showLoading && (
+  <div className="py-8">
+    <div className="flex flex-col items-center justify-center">
+      <div className="loader mb-4"></div>
+      <p className="text-gray-600 font-semibold">
+        आपका आईडी कार्ड तैयार किया जा रहा है...
+      </p>
+    </div>
 
-
-            {userData && (
-  <div className="flex flex-col items-center mt-8">
- 
-    {/* ── CARD ── */}
-    <div
-      id="id-card-capture"
-      ref={cardRef}
-      className="relative w-[320px] bg-white flex flex-col overflow-hidden"
-      style={{ borderRadius: "12px", boxShadow: "0 6px 32px rgba(0,0,0,0.15)", border: "1px solid #e5e7eb" }}
+    <button
+      disabled
+      className="bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold mt-6 cursor-not-allowed"
     >
- 
-      {/* ── FULL CARD WATERMARK BACKGROUND ── */}
+      नया पंजीकरण करें
+    </button>
+  </div>
+)}
+
+{showIdCard && userData && (
+  <div className="flex flex-col items-center mt-8 w-full max-w-4xl mx-auto">
+    
+    {/* ID Card Container */}
+    <div className="w-full flex justify-center mb-8">
       <div
-        className="absolute inset-0 pointer-events-none z-0"
-        style={{
-          backgroundImage: `url(${backimg})`,
-          backgroundSize: "65%",
-          backgroundPosition: "center",
-          backgroundRepeat: "no-repeat",
-          opacity: 0.06,
-        }}
-      />
- 
-      {/* ── HEADER with wave bottom ── */}
-      <div className="relative z-10 w-full" style={{ background: "#f97316" }}>
-        {/* Header text */}
-        <div className="px-4 pt-3 pb-7 text-center">
-          <p className="text-white font-extrabold text-[15px] m-0 leading-snug tracking-wide drop-shadow-sm">
-            अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
-          </p>
-        </div>
- 
-        {/* Wave SVG */}
-        <div className="absolute bottom-0 left-0 right-0" style={{ lineHeight: 0 }}>
-          <svg
-            viewBox="0 0 320 28"
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-full"
-            style={{ display: "block", height: "28px" }}
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M0,14 C53,28 107,0 160,14 C213,28 267,0 320,14 L320,28 L0,28 Z"
-              fill="#ffffff"
-            />
-          </svg>
-        </div>
-      </div>
- 
-      {/* ── BODY ── */}
-      <div className="relative z-10 flex flex-col items-center px-6 pt-2 pb-4 bg-white">
- 
-        {/* Logo */}
-        <img
-          src={backimg}
-          alt="logo"
-          className="w-[58px] h-[58px] object-contain mb-3"
+        id="id-card-capture"
+        ref={cardRef}
+        className="relative w-[320px] bg-white flex flex-col overflow-hidden"
+        style={{ borderRadius: "12px", boxShadow: "0 6px 32px rgba(0,0,0,0.15)", border: "1px solid #e5e7eb" }}
+      >
+        {/* FULL CARD WATERMARK BACKGROUND */}
+        <div
+          className="absolute inset-0 pointer-events-none z-0"
+          style={{
+            backgroundImage: `url(${backimg})`,
+            backgroundSize: "65%",
+            backgroundPosition: "center",
+            backgroundRepeat: "no-repeat",
+            opacity: 0.06,
+          }}
         />
  
-        {/* Member Photo */}
-        <div
-          className="border-2 border-red-500 mb-3"
-          style={{ borderRadius: "4px", padding: "2px" }}
-        >
+        {/* HEADER with wave bottom */}
+        <div className="relative z-10 w-full" style={{ background: "#f97316" }}>
+          <div className="px-4 pt-3 pb-7 text-center">
+            <p className="text-white font-extrabold text-[15px] m-0 leading-snug tracking-wide drop-shadow-sm">
+              अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
+            </p>
+          </div>
+ 
+          <div className="absolute bottom-0 left-0 right-0" style={{ lineHeight: 0 }}>
+            <svg
+              viewBox="0 0 320 28"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-full"
+              style={{ display: "block", height: "28px" }}
+              preserveAspectRatio="none"
+            >
+              <path
+                d="M0,14 C53,28 107,0 160,14 C213,28 267,0 320,14 L320,28 L0,28 Z"
+                fill="#ffffff"
+              />
+            </svg>
+          </div>
+        </div>
+ 
+        {/* BODY */}
+        <div className="relative z-10 flex flex-col items-center px-6 pt-2 pb-4 bg-white">
           <img
-            src={userData.image}
-            alt="Member"
-            className="w-[100px] h-[110px] object-cover block"
-            style={{ borderRadius: "2px" }}
+            src={backimg}
+            alt="logo"
+            className="w-[58px] h-[58px] object-contain mb-3"
           />
-        </div>
  
-        {/* Name */}
-        <p
-          className="text-blue-700 font-extrabold text-[17px] text-center m-0 mb-0.5"
-          style={{ fontFamily: "'Noto Sans Devanagari','Mangal',sans-serif" }}
-        >
-          {userData.name}
-        </p>
- 
-        {/* Designation */}
-        <p className="text-gray-500 text-[13px] text-center m-0 mb-4">
-          (जिला अध्यक्ष)
-        </p>
- 
-        {/* Divider */}
-        <div className="w-full h-px bg-orange-100 mb-3" />
- 
-        {/* Info rows */}
-        <div className="w-full flex flex-col gap-[7px] px-1">
-          {[
-            { label: "ID No", value: userData.receipt },
-            { label: "पिता नाम",       value: userData.father },
-            { label: "मोबाइल नं",  value: userData.mobile },
-          ].map(({ label, value }) => (
-            <div key={label} className="flex items-start text-[13px]">
-              <span className="text-gray-800 font-semibold w-[90px] shrink-0">{label}</span>
-              <span className="text-gray-600 mr-2 font-medium">:</span>
-              <span className="text-gray-700">{value}</span>
-            </div>
-          ))}
-        </div>
-      </div>
- 
-      {/* ── FOOTER with wave top ── */}
-      <div className="relative z-10 w-full" style={{ background: "#f97316" }}>
-        {/* Wave SVG top */}
-        <div className="w-full" style={{ lineHeight: 0 }}>
-          <svg
-            viewBox="0 0 320 28"
-            xmlns="http://www.w3.org/2000/svg"
-            className="w-full"
-            style={{ display: "block", height: "28px" }}
-            preserveAspectRatio="none"
-          >
-            <path
-              d="M0,14 C53,0 107,28 160,14 C213,0 267,28 320,14 L320,0 L0,0 Z"
-              fill="#ffffff"
+          <div className="border-2 border-red-500 mb-3" style={{ borderRadius: "4px", padding: "2px" }}>
+            <img
+              src={userData.image}
+              alt="Member"
+              className="w-[100px] h-[110px] object-cover block"
+              style={{ borderRadius: "2px" }}
             />
-          </svg>
+          </div>
+ 
+          <p
+            className="text-blue-700 font-extrabold text-[17px] text-center m-0 mb-0.5"
+            style={{ fontFamily: "'Noto Sans Devanagari','Mangal',sans-serif" }}
+          >
+            {userData.name}
+          </p>
+ 
+          <p className="text-gray-500 text-[13px] text-center m-0 mb-4">
+            (जिला अध्यक्ष)
+          </p>
+ 
+          <div className="w-full h-px bg-orange-100 mb-3" />
+ 
+          <div className="w-full flex flex-col gap-[7px] px-1">
+            {[
+              { label: "ID No", value: userData.receipt },
+              { label: "पिता नाम", value: userData.father },
+              { label: "मोबाइल नं", value: userData.mobile },
+            ].map(({ label, value }) => (
+              <div key={label} className="flex items-start text-[13px]">
+                <span className="text-gray-800 font-semibold w-[90px] shrink-0">{label}</span>
+                <span className="text-gray-600 mr-2 font-medium">:</span>
+                <span className="text-gray-700">{value}</span>
+              </div>
+            ))}
+          </div>
         </div>
  
-        {/* Footer text */}
-        <div className="px-3 pb-3 text-center">
-          <p className="text-white font-bold text-[13px] m-0 tracking-wide">
-            Help Line No.: 09549560000
-          </p>
+        {/* FOOTER with wave top */}
+        <div className="relative z-10 w-full" style={{ background: "#f97316" }}>
+          <div className="w-full" style={{ lineHeight: 0 }}>
+            <svg
+              viewBox="0 0 320 28"
+              xmlns="http://www.w3.org/2000/svg"
+              className="w-full"
+              style={{ display: "block", height: "28px" }}
+              preserveAspectRatio="none"
+            >
+              <path
+                d="M0,14 C53,0 107,28 160,14 C213,0 267,28 320,14 L320,0 L0,0 Z"
+                fill="#ffffff"
+              />
+            </svg>
+          </div>
+ 
+          <div className="px-3 pb-3 text-center">
+            <p className="text-white font-bold text-[13px] m-0 tracking-wide">
+              Help Line No.: 09549560000
+            </p>
+          </div>
         </div>
       </div>
- 
     </div>
- 
-    {/* ── DOWNLOAD BUTTON ── */}
-    <button
-      type="button"
-      onClick={downloadCard}
-      className="mt-5 inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md active:scale-95 transition-all duration-200 border-0 cursor-pointer"
-    >
-      ⬇️ Download ID Card PNG
-    </button>
- 
+
+    {/* Action Buttons */}
+    <div className="flex gap-4 mb-8">
+      <button
+        type="button"
+        onClick={downloadCard}
+        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md active:scale-95 transition-all duration-200 border-0 cursor-pointer"
+      >
+        ⬇️ Download ID Card PNG
+      </button>
+      
+      <button
+        onClick={() => {
+          setShowIdCard(false);
+          resetForm();
+        }}
+        className="bg-[#0f1d3a] text-white px-6 py-3 rounded-lg font-semibold"
+        type="button"
+      >
+        नया पंजीकरण करें
+      </button>
+    </div>
+
+    {/* Receipt Section - Ab ID card ke neeche */}
+    {showReceipt && receiptData && (
+      <div className="w-full mt-8 border-t pt-8">
+        <h3 className="text-2xl font-bold text-[#0f1d3a] text-center mb-6">
+          भुगतान रसीद
+        </h3>
+        
+        <div className="flex justify-center">
+          <div 
+            id="receipt-capture"
+            className="max-w-lg w-full mx-auto"
+            style={{ 
+              backgroundColor: "#f38cb4", 
+              padding: "30px", 
+              border: "2px solid #333", 
+              fontFamily: "Arial, sans-serif"
+            }}
+          >
+            <table width="100%" style={{ fontSize: "12px", fontWeight: "bold" }}>
+              <tbody>
+                <tr>
+                  <td>
+                    Regd. No. 216/JAIPUR/2024<br />
+                    PAN NO.: AAKTA5604N
+                  </td>
+                  <td style={{ textAlign: "center", fontSize: "18px" }}>रसीद</td>
+                  <td style={{ textAlign: "right" }}>Mob.: 9549566300</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style={{ textAlign: "center", marginTop: "10px" }}>
+              <h1 style={{ margin: 0, fontSize: "26px", fontWeight: "bold" }}>
+                अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
+              </h1>
+              <p style={{ margin: "5px 0", fontSize: "13px", fontWeight: "bold" }}>
+                पंजीकृत प्रधान कार्यालय : प्लॉट नं. 115-116, विनायक विहार-डी,<br />
+                हरनाथपुरा, कालवाड़ रोड़, जयपुर-302012
+              </p>
+            </div>
+
+            <br />
+
+            <table width="100%" style={{ fontWeight: "bold", marginBottom: "10px" }}>
+              <tbody>
+                <tr>
+                  <td width="50%">
+                    क्रमांक :
+                    <span style={{ color: "red", fontSize: "22px", fontWeight: "bold" }}>
+                      {String(receiptData.receiptNumber).padStart(4, "0")}
+                    </span>
+                  </td>
+                  <td style={{ textAlign: "right" }}>
+                    दिनांक : {new Date(receiptData.createdAt).toLocaleDateString("en-IN")}
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+
+            <div style={{ lineHeight: "2.2", fontWeight: "bold" }}>
+              <div style={{ borderBottom: "1px dotted #333", padding: "5px 0" }}>
+                श्रीमान्/श्रीमती/सुश्री :
+                <span style={{ fontWeight: "normal" }}> {receiptData.memberName}</span>
+              </div>
+
+              <div style={{ borderBottom: "1px dotted #333", padding: "5px 0" }}>
+                पता :
+                <span style={{ fontWeight: "normal" }}> {receiptData.residenceAddress}</span>
+                <span style={{ float: "right" }}>
+                  मो.: <span style={{ fontWeight: "normal" }}>{receiptData.mobile}</span>
+                </span>
+              </div>
+
+              <div style={{ borderBottom: "1px dotted #333", padding: "5px 0" }}>
+                सदस्यता प्रकार :
+                <span style={{ fontWeight: "normal" }}> {receiptData.membershipType === "life" ? "आजीवन सदस्य" : "वार्षिक सदस्य"}</span>
+              </div>
+
+              <div style={{ borderBottom: "1px dotted #333", padding: "5px 0" }}>
+                जिला :
+                <span style={{ fontWeight: "normal" }}> {receiptData.district}</span>
+                विधानसभा :
+                <span style={{ fontWeight: "normal" }}> {receiptData.vidhansabha}</span>
+                <span style={{ float: "right" }}>
+                  राज्य :
+                  <span style={{ fontWeight: "normal" }}> {receiptData.state}</span>
+                </span>
+              </div>
+
+              <div style={{ borderBottom: "1px dotted #333", padding: "5px 0" }}>
+                से रुपये (शब्दों में) :
+                <span style={{ fontWeight: "normal" }}>
+                  {numberToHindiWords(receiptData.membershipFee)}
+                </span>
+              </div>
+
+              <div style={{ borderBottom: "1px dotted #333", padding: "5px 0" }}>
+                नकद/बैंक/ऑनलाइन सधन्यवाद प्राप्त किये।
+                <span style={{ float: "right" }}>
+                  PAN :
+                  <span style={{ 
+                    border: "1px solid #000", 
+                    padding: "3px 8px", 
+                    fontFamily: "monospace", 
+                    letterSpacing: "3px",
+                    fontWeight: "normal"
+                  }}>
+                    {receiptData.pan ? receiptData.pan.split("").join(" ") : "-----"}
+                  </span>
+                </span>
+              </div>
+            </div>
+
+            <br />
+
+            <table width="100%" style={{ marginTop: "10px" }}>
+              <tbody>
+                <tr>
+                  <td width="40%" style={{ border: "2px solid #000", textAlign: "center", padding: "10px" }}>
+                    <span style={{ fontSize: "35px", fontWeight: "bold" }}>
+                      ₹ {receiptData.membershipFee}
+                    </span>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Receipt Download Buttons */}
+        <div className="flex gap-3 mt-6 justify-center">
+          <button
+            onClick={() => downloadReceipt()}
+            className="bg-[#e87722] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#d66a1a] transition"
+          >
+            ⬇️ रसीद डाउनलोड करें
+          </button>
+          <button
+            onClick={() => setShowReceipt(false)}
+            className="border-2 border-[#e87722] text-[#e87722] px-6 py-2 rounded-lg font-semibold hover:bg-[#e87722] hover:text-white transition"
+          >
+            बंद करें
+          </button>
+        </div>
+      </div>
+    )}
   </div>
 )}
  </div>
+
+
+
         ) : (
           <div className="bg-white rounded-lg p-6 md:p-10 shadow-lg">
             <form onSubmit={handleSubmit}>

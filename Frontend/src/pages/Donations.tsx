@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios"; // top me add karo
+import axios from "axios";
 import {
   BookOpen,
   HeartPulse,
@@ -93,6 +93,8 @@ const Donations = () => {
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [step, setStep] = useState<1 | 2>(1);
+  const [loading, setLoading] = useState(false);
+  const [donationData, setDonationData] = useState<any>(null);
 
   const effectiveAmount =
     form.amount === "custom"
@@ -107,7 +109,7 @@ const Donations = () => {
         return validationRules.name.message;
     }
     if (name === "email") {
-      if (!validationRules.email.regex.test(value))
+      if (value.trim() && !validationRules.email.regex.test(value))
         return validationRules.email.message;
     }
     if (name === "mobile") {
@@ -141,7 +143,7 @@ const Donations = () => {
     if (form.anonymous) return true;
     return (
       isFieldValid("name", form.name) &&
-      isFieldValid("email", form.email) &&
+      (!form.email || isFieldValid("email", form.email)) &&
       isFieldValid("mobile", form.mobile)
     );
   };
@@ -171,71 +173,151 @@ const Donations = () => {
     setErrors((prev) => ({ ...prev, [name]: err }));
   };
 
- 
+  // ── Razorpay Integration ─────────────────────────────────────────────────────
+  const loadRazorpayScript = () => {
+    return new Promise((resolve) => {
+      const script = document.createElement("script");
+      script.src = "https://checkout.razorpay.com/v1/checkout.js";
+      script.onload = () => resolve(true);
+      script.onerror = () => resolve(false);
+      document.body.appendChild(script);
+    });
+  };
 
+  const handlePayment = async () => {
+    setLoading(true);
 
+    try {
+      // Step 1: Create donation record
+      const donationResponse = await axios.post(
+        "http://localhost:3000/api/donations/create",
+        {
+          amount: effectiveAmount,
+          cause: form.cause,
+          name: form.name,
+          email: form.email,
+          mobile: form.mobile,
+          pan: form.pan,
+          anonymous: form.anonymous,
+          message: form.message,
+        }
+      );
+
+      console.log("Donation created:", donationResponse.data);
+      const donationId = donationResponse.data.data._id;
+
+      // Step 2: Create Razorpay order
+      const orderResponse = await axios.post(
+        "http://localhost:3000/api/donations/create-order",
+        {
+          amount: effectiveAmount,
+          donationId: donationId,
+        }
+      );
+
+      const { order, key } = orderResponse.data;
+
+      // Step 3: Load Razorpay and open payment
+      const isScriptLoaded = await loadRazorpayScript();
+      if (!isScriptLoaded) {
+        alert("Razorpay SDK failed to load");
+        setLoading(false);
+        return;
+      }
+
+      const options = {
+        key: key,
+        amount: order.amount,
+        currency: "INR",
+        name: "OBC Mahasabha",
+        description: `Donation for ${causes.find(c => c.id === form.cause)?.label}`,
+        order_id: order.id,
+        prefill: {
+          name: form.name,
+          email: form.email,
+          contact: form.mobile,
+        },
+        notes: {
+          donationId: donationId,
+          cause: form.cause,
+        },
+        theme: {
+          color: "#e87722",
+        },
+        handler: async function (response: any) {
+          try {
+            // Step 4: Verify payment
+            const verifyResponse = await axios.post(
+              "http://localhost:3000/api/donations/verify-payment",
+              {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                donationId: donationId,
+              }
+            );
+
+            if (verifyResponse.data.success) {
+              setDonationData({
+                ...donationResponse.data.data,
+                paymentId: response.razorpay_payment_id,
+              });
+              setSubmitted(true);
+            } else {
+              alert("Payment verification failed");
+            }
+          } catch (error) {
+            console.error("Verification error:", error);
+            alert("Payment verification failed");
+          } finally {
+            setLoading(false);
+          }
+        },
+        modal: {
+          ondismiss: function () {
+            setLoading(false);
+            alert("Payment cancelled");
+          },
+        },
+      };
+
+      const razorpay = new (window as any).Razorpay(options);
+      razorpay.open();
+
+    } catch (error: any) {
+      console.error("Payment error:", error);
+      alert(error.response?.data?.message || "Payment initialization failed");
+      setLoading(false);
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-  
+
     const newErrors: Record<string, string> = {};
-  
+
     if (!form.anonymous) {
       newErrors.name = validateField("name", form.name);
-      newErrors.email = validateField("email", form.email);
+      if (form.email) newErrors.email = validateField("email", form.email);
       newErrors.mobile = validateField("mobile", form.mobile);
     }
-  
+
     if (form.pan) newErrors.pan = validateField("pan", form.pan);
-  
+
     setErrors(newErrors);
-  
+
     const hasErrors = Object.values(newErrors).some(Boolean);
-  
+
     if (!hasErrors && effectiveAmount >= 1) {
-  
-      try {
-  
-        const response = await axios({
-          method: "POST",
-          url: "http://localhost:3000/api/donations/create",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          data: {
-            amount: effectiveAmount,
-            cause: form.cause,
-            name: form.name,
-            email: form.email,
-            mobile: form.mobile,
-            pan: form.pan,
-            anonymous: form.anonymous,
-            message: form.message,
-          },
-        });
-  
-        console.log("SUCCESS:", response.data);
-  
-        setSubmitted(true); // tumhara original code
-  
-      } catch (error: any) {
-  
-        console.error("FULL ERROR:", error);
-  
-        if (error.response) {
-          alert(error.response.data.message);
-        } else {
-          alert("Backend connect nahi ho raha");
-        }
-  
-      }
-  
+      // Call Razorpay payment
+      await handlePayment();
     }
   };
+
   const selectedCause = causes.find((c) => c.id === form.cause);
 
   // ── Success Screen ──────────────────────────────────────────────────────────
-  if (submitted) {
+  if (submitted && donationData) {
     return (
       <div className="min-h-screen bg-[#f5f0e8] flex items-center justify-center px-4 py-12 font-sans">
         <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-10 text-center border border-[#e8dfd0]">
@@ -250,7 +332,7 @@ const Donations = () => {
           <div className="bg-[#f5f0e8] rounded-xl p-5 mb-6 text-left space-y-2">
             <div className="flex justify-between text-sm">
               <span className="text-gray-500">दान राशि</span>
-              <span className="font-bold text-[#0f1d3a]">₹{effectiveAmount.toLocaleString("en-IN")}</span>
+              <span className="font-bold text-[#0f1d3a]">₹{donationData.amount?.toLocaleString("en-IN")}</span>
             </div>
             <div className="flex justify-between text-sm items-center">
               <span className="text-gray-500">उद्देश्य</span>
@@ -260,10 +342,16 @@ const Donations = () => {
               </span>
             </div>
             {!form.anonymous && (
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-500">नाम</span>
-                <span className="font-semibold text-[#0f1d3a]">{form.name}</span>
-              </div>
+              <>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">नाम</span>
+                  <span className="font-semibold text-[#0f1d3a]">{donationData.name}</span>
+                </div>
+                <div className="flex justify-between text-sm">
+                  <span className="text-gray-500">भुगतान ID</span>
+                  <span className="font-semibold text-[#0f1d3a] text-xs">{donationData.paymentId}</span>
+                </div>
+              </>
             )}
           </div>
 
@@ -279,6 +367,7 @@ const Donations = () => {
                 mobile: "", pan: "", cause: "general", anonymous: false, message: "",
               });
               setErrors({});
+              setDonationData(null);
             }}
             className="w-full bg-[#0f1d3a] hover:bg-[#162448] text-white rounded-xl py-3 font-bold transition"
           >
@@ -406,20 +495,14 @@ const Donations = () => {
                       <span>{validateCustomAmount(form.customAmount)}</span>
                     </div>
                   )}
-                  {effectiveAmount > 0 && form.amount === "custom" && !validateCustomAmount(form.customAmount) && (
-                    <div className="mt-3 bg-green-50 border border-green-200 rounded-xl px-4 py-2.5 flex items-center justify-between">
-                      <span className="text-sm text-green-700">चयनित राशि</span>
-                      <span className="text-lg font-extrabold text-green-700">₹{effectiveAmount.toLocaleString("en-IN")}</span>
-                    </div>
-                  )}
                 </div>
 
                 <button
                   type="button"
-                  disabled={!isStep1Valid()}
+                  disabled={!isStep1Valid() || loading}
                   onClick={() => setStep(2)}
                   className={`w-full rounded-xl py-4 text-base font-extrabold transition-all flex items-center justify-center gap-2 ${
-                    isStep1Valid()
+                    isStep1Valid() && !loading
                       ? "bg-[#e87722] hover:bg-[#d46a18] text-white shadow-md hover:shadow-lg"
                       : "bg-gray-200 text-gray-400 cursor-not-allowed"
                   }`}
@@ -584,14 +667,20 @@ const Donations = () => {
                   </button>
                   <button
                     type="submit"
-                    disabled={!isStep2Valid()}
+                    disabled={!isStep2Valid() || loading}
                     className={`flex-1 rounded-xl py-3 font-extrabold text-base transition-all flex items-center justify-center gap-2 ${
-                      isStep2Valid()
+                      isStep2Valid() && !loading
                         ? "bg-[#e87722] hover:bg-[#d46a18] text-white shadow-md hover:shadow-lg"
                         : "bg-gray-200 text-gray-400 cursor-not-allowed"
                     }`}
                   >
-                    <CreditCard size={18} /> Donate Now — ₹{effectiveAmount.toLocaleString("en-IN")}
+                    {loading ? (
+                      <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                    ) : (
+                      <>
+                        <CreditCard size={18} /> Donate Now — ₹{effectiveAmount.toLocaleString("en-IN")}
+                      </>
+                    )}
                   </button>
                 </div>
 
@@ -608,7 +697,6 @@ const Donations = () => {
           {[
             { Icon: ShieldCheck, label: "SSL Secured" },
             { Icon: Trophy, label: "NGO Certified" },
-            
           ].map(({ Icon, label }) => (
             <span key={label} className="text-xs text-gray-500 font-medium flex items-center gap-1">
               <Icon size={13} className="text-[#e87722]" />

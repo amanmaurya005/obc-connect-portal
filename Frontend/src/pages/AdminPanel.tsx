@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import Instance from "../AxiosConfig";
 
 interface Member {
   _id: string;
@@ -25,7 +25,7 @@ const AdminPanel = () => {
   const fetchMemberships = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:3000/api/membership");
+      const res = await Instance.get("/api/membership");
       setMemberships(res.data.data || []);
     } catch (error) {
       console.error(error);
@@ -39,7 +39,7 @@ const AdminPanel = () => {
   const handleDelete = async (id: string) => {
     if (!window.confirm("Are you sure you want to delete this member?")) return;
     try {
-      await axios.delete(`http://localhost:3000/api/membership/${id}`);
+      await Instance.delete(`/api/membership/${id}`);
       setMemberships((prev) => prev.filter((m) => m._id !== id));
       if (selectedMember?._id === id) setSelectedMember(null);
     } catch (error) {

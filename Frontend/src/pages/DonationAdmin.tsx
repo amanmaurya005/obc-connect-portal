@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import Instance from "../AxiosConfig";
 
 interface Donation {
   _id: string;
@@ -21,7 +21,7 @@ const DonationAdmin = () => {
   const fetchDonations = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:3000/api/donations/all");
+      const res = await Instance.get("/api/donations/all");
       setDonations(res.data.data || []);
     } catch (error) {
       console.error(error);

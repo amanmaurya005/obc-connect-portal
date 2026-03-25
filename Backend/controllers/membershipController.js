@@ -493,3 +493,35 @@ export const getSingleMembership = async (req, res) => {
     });
   }
 };
+
+
+
+// In your membershipController.js
+export const getReceipt = async (req, res) => {
+  try {
+    const { memberId } = req.params;
+    
+    const membership = await Membership.findOne({ memberId });
+    
+    if (!membership) {
+      return res.status(404).json({ error: "Member not found" });
+    }
+    
+    res.json({
+      receiptNumber: membership.receiptNumber,
+      memberName: membership.memberName,
+      residenceAddress: membership.residenceAddress,
+      mobile: membership.mobile,
+      membershipType: membership.membershipType,
+      district: membership.district,
+      vidhansabha: membership.vidhansabha,
+      state: membership.state,
+      membershipFee: membership.membershipFee,
+      pan: membership.pan,
+      createdAt: membership.createdAt
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: error.message });
+  }
+};
