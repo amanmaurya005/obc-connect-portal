@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import axios from "axios";
+import Instance from "../AxiosConfig";
 import {
   BookOpen,
   HeartPulse,
@@ -189,8 +189,8 @@ const Donations = () => {
 
     try {
       // Step 1: Create donation record
-      const donationResponse = await axios.post(
-        "http://localhost:3000/api/donations/create",
+      const donationResponse = await Instance.post(
+        "/api/donations/create",
         {
           amount: effectiveAmount,
           cause: form.cause,
@@ -207,8 +207,8 @@ const Donations = () => {
       const donationId = donationResponse.data.data._id;
 
       // Step 2: Create Razorpay order
-      const orderResponse = await axios.post(
-        "http://localhost:3000/api/donations/create-order",
+      const orderResponse = await Instance.post(
+        "/api/donations/create-order",
         {
           amount: effectiveAmount,
           donationId: donationId,
@@ -247,8 +247,8 @@ const Donations = () => {
         handler: async function (response: any) {
           try {
             // Step 4: Verify payment
-            const verifyResponse = await axios.post(
-              "http://localhost:3000/api/donations/verify-payment",
+            const verifyResponse = await Instance.post(
+              "/api/donations/verify-payment",
               {
                 razorpay_order_id: response.razorpay_order_id,
                 razorpay_payment_id: response.razorpay_payment_id,
