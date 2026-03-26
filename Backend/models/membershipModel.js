@@ -91,7 +91,7 @@ const membershipSchema = new mongoose.Schema({
     required: [true, "Vidhansabha is required"]
   },
 
-  // ✅ Cloudinary URL save होगा
+ 
   image: {
     type: String,
     required: [true, "Profile image is required"]
@@ -100,7 +100,7 @@ const membershipSchema = new mongoose.Schema({
   timestamps: true 
 });
 
-// Index for faster queries
+
 membershipSchema.index({ email: 1 }, { sparse: true });
 membershipSchema.index({ mobile: 1 });
 

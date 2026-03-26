@@ -1621,19 +1621,14 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   
         handler: async function (response) {
           try {
-            console.log("✅ Payment Success:", response);
-  
-            // STEP 1: Verify payment with JSON (NOT FormData)
             const verifyRes = await Instance.post("/api/membership/verify-payment", {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
-              // Don't send formData here - your backend doesn't need it in verify endpoint
+              
             });
   
-            console.log("✅ Payment verified:", verifyRes.data);
-  
-            // STEP 2: Register member with FormData (includes all form data + image)
+           
             const formDataToSend = new FormData();
             formDataToSend.append("memberName", form.memberName);
             formDataToSend.append("fatherName", form.fatherName);
@@ -1664,7 +1659,7 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
             formDataToSend.append("razorpay_payment_id", response.razorpay_payment_id);
             formDataToSend.append("razorpay_order_id", response.razorpay_order_id);
   
-            // Add image file
+          
             if (form.imageFile) {
               formDataToSend.append("imageFile", form.imageFile);
             }

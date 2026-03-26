@@ -19,7 +19,7 @@ const donationSchema = new mongoose.Schema({
     required: false,
   },
   mobile: {
-    type: String,
+    type: Number,
     required: false,
   },
   pan: {
@@ -50,6 +50,12 @@ const donationSchema = new mongoose.Schema({
   paymentDate: {
     type: Date,
     default: null,
+  },
+
+  paymentMethod: {
+    type: String,
+    enum: ["card", "upi", "netbanking", "wallet", "emi", "other"],
+    default: "other",
   },
 }, {
   timestamps: true,
