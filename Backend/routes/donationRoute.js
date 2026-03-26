@@ -15,7 +15,7 @@ router.get("/all", getAllDonations);
 
 router.get("/:id", getDonationById);
 
-// Add to your donation routes
+
 router.post("/create-order", createDonationOrder);
 router.post("/verify-payment", verifyDonationPayment);
 

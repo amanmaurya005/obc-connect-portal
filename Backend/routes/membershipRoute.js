@@ -13,6 +13,4 @@ router.post("/verify-payment", verifyPayment);
 // In your routes file
 router.get("/receipt/:memberId", getReceipt);
 
-
-
 export default router;
