@@ -98,33 +98,6 @@ const AdminPanel = () => {
         </svg>
       ),
     },
-    {
-      label: "Search Results",
-      value: filteredMembers.length,
-      valueClass: "text-amber-600",
-      bg: "bg-amber-50",
-      iconColor: "text-amber-500",
-      icon: (
-        <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <circle cx="11" cy="11" r="8"/>
-          <path d="m21 21-4.35-4.35"/>
-        </svg>
-      ),
-    },
-    {
-      label: "Avg. Fee",
-      value: memberships.length
-        ? `₹${Math.round(totalAmount / memberships.length).toLocaleString("en-IN")}`
-        : "—",
-      valueClass: "text-violet-600",
-      bg: "bg-violet-50",
-      iconColor: "text-violet-500",
-      icon: (
-        <svg width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
-          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/>
-        </svg>
-      ),
-    },
   ];
 
   return (
@@ -161,7 +134,7 @@ const AdminPanel = () => {
         <div className="space-y-6">
 
           {/* ── Stat Cards ── */}
-          <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+          <div className="grid grid-cols-2 gap-4 lg:grid-cols-2">
             {stats.map((s) => (
               <div key={s.label} className="rounded-2xl border border-slate-200 bg-white p-5 shadow-sm">
                 <div className="mb-3 flex items-center justify-between">
