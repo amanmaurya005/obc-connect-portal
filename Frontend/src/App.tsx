@@ -1,6 +1,10 @@
 import React from "react";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
 
+import { AuthProvider } from "./contexts/AuthContext";
+import ProtectedRoute from "./components/ProtectedRoute";
+import AdminLogin from "./pages/AdminLogin";
+
 import First from "./First";
 
 import Index from "./pages/Index";
@@ -145,21 +149,22 @@ const router = createBrowserRouter([
 
   // ✅ ADMIN ROUTES (HEADER NAHI AAYEGA)
   {
+    path: "/admin/login",
+    element: <AdminLogin />,
+  },
+
+  // Protected Admin Routes
+  {
     path: "/admin",
-    element: <AdminLayout />,
+    element: (
+      <ProtectedRoute>
+        <AdminLayout />
+      </ProtectedRoute>
+    ),
     children: [
-      {
-        index: true,
-        element: <AdminPanel />,
-      },
-      {
-        path: "members",
-        element: <AdminPanel />,
-      },
-      {
-        path: "donations",
-        element: <DonationAdmin />,
-      },
+      { index: true, element: <AdminPanel /> },
+      { path: "members", element: <AdminPanel /> },
+      { path: "donations", element: <DonationAdmin /> },
     ],
   },
 
@@ -169,8 +174,12 @@ const router = createBrowserRouter([
   },
 ]);
 
-const App = () => {
-  return <RouterProvider router={router} />;
+const App: React.FC = () => {
+  return (
+    <AuthProvider>
+      <RouterProvider router={router} />
+    </AuthProvider>
+  );
 };
 
 export default App;

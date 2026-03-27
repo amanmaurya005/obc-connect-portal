@@ -1,9 +1,14 @@
 import React, { useState } from "react";
-import { Outlet, Link, useLocation } from "react-router-dom";
+import { Outlet, Link, useLocation, useNavigate } from "react-router-dom";
+import { useAuth } from "../contexts/AuthContext";  // ✅ IMPORT - TOP PAR
 
 const AdminLayout: React.FC = () => {
   const location = useLocation();
+  const navigate = useNavigate();
+  const { logout, user } = useAuth();  // ✅ HOOK - COMPONENT KE ANDAR, TOP PAR
   const [collapsed, setCollapsed] = useState(false);
+  const [showLogoutMessage, setShowLogoutMessage] = useState(false);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
 
   const navItems = [
     {
@@ -39,13 +44,47 @@ const AdminLayout: React.FC = () => {
     return location.pathname.split("/admin/")[1] || "Home";
   };
 
+  const handleLogout = async () => {
+    setIsLoggingOut(true);
+    try {
+      await logout();
+      setShowLogoutMessage(true);
+      
+      // Hide message after 3 seconds and redirect
+      setTimeout(() => {
+        setShowLogoutMessage(false);
+        navigate("/admin/login");
+      }, 2000);
+    } catch (error) {
+      console.error("Logout error:", error);
+      setIsLoggingOut(false);
+    }
+  };
+
   return (
     <div className="flex h-screen bg-slate-100 font-sans overflow-hidden">
 
+      {/* Logout Success Toast Message */}
+      {showLogoutMessage && (
+        <div className="fixed top-5 right-5 z-50 animate-in slide-in-from-top-2 fade-in duration-300">
+          <div className="flex items-center gap-3 rounded-xl bg-green-50 border border-green-200 shadow-lg px-5 py-4">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-green-100">
+              <svg width="16" height="16" fill="none" stroke="green" strokeWidth="2" viewBox="0 0 24 24">
+                <path d="M20 6L9 17l-5-5"/>
+              </svg>
+            </div>
+            <div>
+              <p className="font-semibold text-green-800 text-sm">Logged Out Successfully!</p>
+              <p className="text-xs text-green-600">Redirecting to login...</p>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Sidebar */}
       <aside
-  className={`
-    relative flex flex-col flex-shrink-0 overflow-hidden h-screen
+        className={`
+          relative flex flex-col flex-shrink-0 overflow-hidden h-screen
           bg-gradient-to-b from-slate-900 to-slate-800
           shadow-2xl transition-all duration-300 ease-in-out
           ${collapsed ? "w-[72px]" : "w-60"}
@@ -103,6 +142,40 @@ const AdminLayout: React.FC = () => {
           })}
         </nav>
 
+        {/* ✅ LOGOUT BUTTON */}
+        <div className="px-3 pb-3">
+          <button
+            onClick={handleLogout}
+            disabled={isLoggingOut}
+            className={`
+              group flex w-full items-center gap-3 overflow-hidden whitespace-nowrap rounded-xl
+              px-3 py-[10px] text-sm font-medium transition-all duration-150
+              ${collapsed ? "justify-center" : ""}
+              ${isLoggingOut 
+                ? "bg-red-500/20 text-red-300 cursor-not-allowed" 
+                : "bg-red-500/10 text-red-300 hover:bg-red-500/20 hover:text-red-200"
+              }
+            `}
+          >
+            <svg
+              width="18"
+              height="18"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
+              className="flex-shrink-0"
+            >
+              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+              <polyline points="16 17 21 12 16 7" />
+              <line x1="21" y1="12" x2="9" y2="12" />
+            </svg>
+            <span className={`transition-opacity duration-200 ${collapsed ? "opacity-0 w-0" : "opacity-100"}`}>
+              {isLoggingOut ? "Logging out..." : "Logout"}
+            </span>
+          </button>
+        </div>
+
         {/* Collapse Button */}
         <div className="px-3 pb-5">
           <button
@@ -110,7 +183,12 @@ const AdminLayout: React.FC = () => {
             className="flex w-full items-center gap-3 overflow-hidden whitespace-nowrap rounded-xl border border-white/8 bg-white/4 px-3 py-[10px] text-sm font-medium text-white/40 transition-all duration-150 hover:bg-white/8 hover:text-white/70"
           >
             <svg
-              width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"
+              width="16"
+              height="16"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="2"
+              viewBox="0 0 24 24"
               className={`flex-shrink-0 transition-transform duration-300 ${collapsed ? "rotate-180" : "rotate-0"}`}
             >
               <path d="M15 18l-6-6 6-6"/>
@@ -149,9 +227,15 @@ const AdminLayout: React.FC = () => {
               </svg>
             </button>
 
-            {/* Avatar */}
-            <div className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-[13px] font-bold text-white shadow-md shadow-indigo-400/30">
-              A
+            {/* ✅ Avatar with Admin Name */}
+            <div className="flex items-center gap-2">
+              <div className="flex h-9 w-9 cursor-pointer items-center justify-center rounded-xl bg-gradient-to-br from-indigo-500 to-violet-600 text-[13px] font-bold text-white shadow-md shadow-indigo-400/30">
+                {user?.name?.charAt(0).toUpperCase() || "A"}
+              </div>
+              <div className="hidden md:block">
+                <p className="text-sm font-semibold text-slate-700">{user?.name || "Admin"}</p>
+                <p className="text-xs text-slate-400">{user?.email || "admin@obcmahasabha.co.in"}</p>
+              </div>
             </div>
           </div>
         </header>

@@ -2013,150 +2013,152 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
 
     {/* Receipt Section - Ab ID card ke neeche */}
     {showReceipt && receiptData && (
-      <div className="w-full mt-8 border-t pt-8">
-        <h3 className="text-2xl font-bold text-[#0f1d3a] text-center mb-6">
-          भुगतान रसीद
-        </h3>
-        
-        <div className="flex justify-center">
-          <div 
-            id="receipt-capture"
-            className="max-w-lg w-full mx-auto"
-            style={{ 
-              backgroundColor: "#f38cb4", 
-              padding: "30px", 
-              border: "2px solid #333", 
-              fontFamily: "Arial, sans-serif"
-            }}
-          >
-            <table width="100%" style={{ fontSize: "12px", fontWeight: "bold" }}>
-              <tbody>
-                <tr>
-                  <td>
-                    Regd. No. 216/JAIPUR/2024<br />
-                    PAN NO.: AAKTA5604N
-                  </td>
-                  <td style={{ textAlign: "center", fontSize: "18px" }}>रसीद</td>
-                  <td style={{ textAlign: "right" }}>Mob.: 9549566300</td>
-                </tr>
-              </tbody>
-            </table>
+  <div className="w-full mt-8 border-t pt-8">
+    <h3 className="text-2xl font-bold text-[#0f1d3a] text-center mb-6">
+      भुगतान रसीद
+    </h3>
 
-            <div style={{ textAlign: "center", marginTop: "10px" }}>
-              <h1 style={{ margin: 0, fontSize: "26px", fontWeight: "bold" }}>
-                अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
-              </h1>
-              <p style={{ margin: "5px 0", fontSize: "13px", fontWeight: "bold" }}>
-                पंजीकृत प्रधान कार्यालय : प्लॉट नं. 115-116, विनायक विहार-डी,<br />
-                हरनाथपुरा, कालवाड़ रोड़, जयपुर-302012
-              </p>
-            </div>
+    <div className="flex justify-center">
+      <div
+        id="receipt-capture"
+        className="w-[700px] bg-[#f38cb4] p-5 border-2 border-black font-sans text-black"
+      >
 
-            <br />
+        {/* Header */}
+        <table className="w-full table-fixed text-[12px] font-bold">
+          <tbody>
+            <tr>
+              <td className="w-1/3 text-left align-top">
+                Regd. No. 216/JAIPUR/2024 <br />
+                PAN NO.: AAKTA5604N
+              </td>
 
-            <table width="100%" style={{ fontWeight: "bold", marginBottom: "10px" }}>
-              <tbody>
-                <tr>
-                  <td width="50%">
-                    क्रमांक :
-                    <span style={{ color: "red", fontSize: "22px", fontWeight: "bold" }}>
-                      {String(receiptData.receiptNumber).padStart(4, "0")}
-                    </span>
-                  </td>
-                  <td style={{ textAlign: "right" }}>
-                    दिनांक : {new Date(receiptData.createdAt).toLocaleDateString("en-IN")}
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+              <td className="w-1/3 text-center align-top text-[18px]">
+                रसीद
+              </td>
 
-            <div style={{ lineHeight: "2.2", fontWeight: "bold" }}>
-              <div style={{ borderBottom: "1px dotted #333", padding: "5px 0" }}>
-                श्रीमान्/श्रीमती/सुश्री :
-                <span style={{ fontWeight: "normal" }}> {receiptData.memberName}</span>
-              </div>
+              <td className="w-1/3 text-right align-top">
+                Mob.: 9549566300
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-              <div style={{ borderBottom: "1px dotted #333", padding: "5px 0" }}>
-                पता :
-                <span style={{ fontWeight: "normal" }}> {receiptData.residenceAddress}</span>
-                <span style={{ float: "right" }}>
-                  मो.: <span style={{ fontWeight: "normal" }}>{receiptData.mobile}</span>
+        {/* Title (CENTER ONLY) */}
+        <div className="text-center mt-2">
+          <h1 className="text-[24px] font-bold m-0">
+            अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
+          </h1>
+          <p className="text-[12px] font-bold mt-1">
+            पंजीकृत प्रधान कार्यालय : प्लॉट नं. 115-116, विनायक विहार-डी,<br />
+            हरनाथपुरा, कालवाड़ रोड, जयपुर-302012
+          </p>
+        </div>
+
+        {/* Receipt Row */}
+        <table className="w-full table-fixed font-bold mt-2">
+          <tbody>
+            <tr>
+              <td className="w-1/2 text-left">
+                क्रमांक :
+                <span className="text-red-500 text-[22px] ml-1">
+                  {String(receiptData.receiptNumber).padStart(3, "0")}
                 </span>
-              </div>
+              </td>
 
-              <div style={{ borderBottom: "1px dotted #333", padding: "5px 0" }}>
-                सदस्यता प्रकार :
-                <span style={{ fontWeight: "normal" }}> {receiptData.membershipType === "life" ? "आजीवन सदस्य" : "वार्षिक सदस्य"}</span>
-              </div>
+              <td className="w-1/2 text-right">
+                दिनांक :{" "}
+                {new Date(receiptData.createdAt).toLocaleDateString("en-IN")}
+              </td>
+            </tr>
+          </tbody>
+        </table>
 
-              <div style={{ borderBottom: "1px dotted #333", padding: "5px 0" }}>
-                जिला :
-                <span style={{ fontWeight: "normal" }}> {receiptData.district}</span>
-                विधानसभा :
-                <span style={{ fontWeight: "normal" }}> {receiptData.vidhansabha}</span>
-                <span style={{ float: "right" }}>
-                  राज्य :
-                  <span style={{ fontWeight: "normal" }}> {receiptData.state}</span>
-                </span>
-              </div>
+        {/* 🔥 IMPORTANT FIX: TEXT LEFT */}
+        <div className="leading-[2.2] font-bold text-[13px] mt-2 text-left">
 
-              <div style={{ borderBottom: "1px dotted #333", padding: "5px 0" }}>
-                से रुपये (शब्दों में) :
-                <span style={{ fontWeight: "normal" }}>
-                  {numberToHindiWords(receiptData.membershipFee)}
-                </span>
-              </div>
+          <div className="border-b border-dotted border-black py-1">
+            श्रीमान्/श्रीमती/सुश्री :
+            <span className="font-normal"> {receiptData.memberName}</span>
+          </div>
 
-              <div style={{ borderBottom: "1px dotted #333", padding: "5px 0" }}>
-                नकद/बैंक/ऑनलाइन सधन्यवाद प्राप्त किये।
-                <span style={{ float: "right" }}>
-                  PAN :
-                  <span style={{ 
-                    border: "1px solid #000", 
-                    padding: "3px 8px", 
-                    fontFamily: "monospace", 
-                    letterSpacing: "3px",
-                    fontWeight: "normal"
-                  }}>
-                    {receiptData.pan ? receiptData.pan.split("").join(" ") : "-----"}
-                  </span>
-                </span>
-              </div>
-            </div>
+          <div className="border-b border-dotted border-black py-1">
+            पता :
+            <span className="font-normal"> {receiptData.residenceAddress}</span>
+            <span className="float-right">
+              मो.: <span className="font-normal">{receiptData.mobile}</span>
+            </span>
+          </div>
 
-            <br />
+          <div className="border-b border-dotted border-black py-1">
+            सदस्यता प्रकार :
+            <span className="font-normal">
+              {receiptData.membershipType === "life"
+                ? "आजीवन सदस्य"
+                : "वार्षिक सदस्य"}
+            </span>
+          </div>
 
-            <table width="100%" style={{ marginTop: "10px" }}>
-              <tbody>
-                <tr>
-                  <td width="40%" style={{ border: "2px solid #000", textAlign: "center", padding: "10px" }}>
-                    <span style={{ fontSize: "35px", fontWeight: "bold" }}>
-                      ₹ {receiptData.membershipFee}
-                    </span>
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div className="border-b border-dotted border-black py-1">
+            जिला :
+            <span className="font-normal"> {receiptData.district}</span>
+            &nbsp;&nbsp; विधानसभा :
+            <span className="font-normal"> {receiptData.vidhansabha}</span>
+
+            <span className="float-right">
+              राज्य :
+              <span className="font-normal"> {receiptData.state}</span>
+            </span>
+          </div>
+
+          <div className="border-b border-dotted border-black py-1">
+            से रुपये (शब्दों में) :
+            <span className="font-normal">
+              {numberToHindiWords(receiptData.membershipFee)}
+            </span>
+          </div>
+
+          <div className="border-b border-dotted border-black py-1">
+            नकद/बैंक/ऑनलाइन सधन्यवाद प्राप्त किये।
+            <span className="float-right">
+              PAN :
+              <span className="border border-black px-2 py-[2px] font-mono tracking-[3px] font-normal">
+                {receiptData.pan || "---------"}
+              </span>
+            </span>
+          </div>
+
+        </div>
+
+        {/* Amount */}
+        <div className="mt-4">
+          <div className="w-[200px] border-2 border-black p-2 text-center">
+            <span className="text-[35px] font-bold">
+              ₹ {receiptData.membershipFee}
+            </span>
           </div>
         </div>
-
-        {/* Receipt Download Buttons */}
-        <div className="flex gap-3 mt-6 justify-center">
-          <button
-            onClick={() => downloadReceipt()}
-            className="bg-[#e87722] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#d66a1a] transition"
-          >
-            ⬇️ रसीद डाउनलोड करें
-          </button>
-          <button
-            onClick={() => setShowReceipt(false)}
-            className="border-2 border-[#e87722] text-[#e87722] px-6 py-2 rounded-lg font-semibold hover:bg-[#e87722] hover:text-white transition"
-          >
-            बंद करें
-          </button>
-        </div>
       </div>
-    )}
+    </div>
+
+    {/* Buttons */}
+    <div className="flex gap-3 mt-6 justify-center">
+      <button
+        onClick={() => downloadReceipt()}
+        className="bg-[#e87722] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#d66a1a] transition"
+      >
+        ⬇️ रसीद डाउनलोड करें
+      </button>
+
+      <button
+        onClick={() => setShowReceipt(false)}
+        className="border-2 border-[#e87722] text-[#e87722] px-6 py-2 rounded-lg font-semibold hover:bg-[#e87722] hover:text-white transition"
+      >
+        बंद करें
+      </button>
+    </div>
+  </div>
+)}
   </div>
 )}
  </div>
@@ -2746,7 +2748,7 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
 
               {/* Submit Buttons */}
               <div className="flex gap-3 flex-wrap">
-                <button
+              <button
                   type="submit"
                   disabled={!isFormValid() || loading}
                   className={`w-full py-3 px-6 rounded-lg font-semibold text-lg transition-all duration-200 ${
