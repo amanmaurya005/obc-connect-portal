@@ -4,9 +4,15 @@ import dotenv from "dotenv";
 import connectDB from "./config/db.js";
 import membershipRoute from "./routes/membershipRoute.js";
 import donationRoute from "./routes/donationRoute.js";
+import adminRoute from './routes/adminRoute.js';
+import cookieParser from 'cookie-parser';
+
+// Add after express.json()
+
 
 dotenv.config();
 const app = express();
+app.use(cookieParser());
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
@@ -36,6 +42,7 @@ try {
 
 app.use("/api/membership", membershipRoute);
 app.use("/api/donations", donationRoute);
+app.use('/api/admin', adminRoute);
 
 
 app.get("/api/test", (req, res) => {
