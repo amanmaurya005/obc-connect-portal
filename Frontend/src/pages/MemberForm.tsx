@@ -877,6 +877,9 @@ export default function MembershipPage() {
   const [loading, setLoading] = useState(false);
   const [receiptData, setReceiptData] = useState(null);
 const [showReceipt, setShowReceipt] = useState(false);
+const [savingData, setSavingData] = useState(false); 
+const [saveProgress, setSaveProgress] = useState(0);
+
 
   const cardRef = useRef<HTMLDivElement | null>(null);
   const [userData, setUserData] = useState<UserCardData | null>(null);
@@ -1601,16 +1604,179 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
 
   const districts = form.state ? stateDistrictData[form.state] || [] : [];
 
+  // const handleSubmit = async (e) => { 
+  //   e.preventDefault();
+  
+  //   if (!validateForm()) return;
+  
+  //   setLoading(true);
+  
+  //   try {
+  //     const { data } = await Instance.post("/api/membership/create-order");
+  
+  //     const options = {
+  //       key: data.key,
+  //       amount: data.order.amount,
+  //       currency: "INR",
+  //       order_id: data.order.id,
+  //       name: "OBC Mahasabha",
+  //       description: "Membership Fee ₹251",
+  
+  //       handler: async function (response) {
+  //         try {
+  //           const verifyRes = await Instance.post("/api/membership/verify-payment", {
+  //             razorpay_order_id: response.razorpay_order_id,
+  //             razorpay_payment_id: response.razorpay_payment_id,
+  //             razorpay_signature: response.razorpay_signature,
+              
+  //           });
+  
+           
+  //           const formDataToSend = new FormData();
+  //           formDataToSend.append("memberName", form.memberName);
+  //           formDataToSend.append("fatherName", form.fatherName);
+  //           formDataToSend.append("businessNature", form.businessNature);
+  //           formDataToSend.append("organizationPosition", form.organizationPosition);
+  //           formDataToSend.append("residenceAddress", form.residenceAddress);
+  //           formDataToSend.append("officeAddress", form.officeAddress);
+  //           formDataToSend.append("residencePhone", form.residencePhone);
+  //           formDataToSend.append("officePhone", form.officePhone);
+  //           formDataToSend.append("mobile", form.mobile);
+  //           formDataToSend.append("whatsapp", form.whatsapp);
+  //           formDataToSend.append("email", form.email);
+  //           formDataToSend.append("pan", form.pan);
+  //           formDataToSend.append("aadhaar", form.aadhaar);
+  //           formDataToSend.append("education", form.education);
+  //           formDataToSend.append("otherEducation", form.otherEducation);
+  //           formDataToSend.append("dob", form.dob);
+  //           formDataToSend.append("marriageDate", form.marriageDate || "");
+  //           formDataToSend.append("bloodGroup", form.bloodGroup);
+  //           formDataToSend.append("tshirtSize", form.tshirtSize);
+  //           formDataToSend.append("socialWork", form.socialWork);
+  //           formDataToSend.append("specialAchievement", form.specialAchievement);
+  //           formDataToSend.append("membershipType", form.membershipType);
+  //           formDataToSend.append("state", form.state);
+  //           formDataToSend.append("district", form.district);
+  //           formDataToSend.append("vidhansabha", selectedVidhansabha);
+  //           formDataToSend.append("membershipFee", "251");
+  //           formDataToSend.append("razorpay_payment_id", response.razorpay_payment_id);
+  //           formDataToSend.append("razorpay_order_id", response.razorpay_order_id);
+  
+          
+  //           if (form.imageFile) {
+  //             formDataToSend.append("imageFile", form.imageFile);
+  //           }
+  
+  //           console.log("📤 Sending registration data to backend...");
+  
+  //           const registerRes = await Instance.post(
+  //             "/api/membership/register",
+  //             formDataToSend,
+  //             {
+  //               headers: {
+  //                 "Content-Type": "multipart/form-data",
+  //               },
+  //               timeout: 30000,
+  //             }
+  //           );
+  
+  //           const memberId = registerRes?.data?.memberId;
+  
+  //           if (!memberId) {
+  //             throw new Error("Member ID not received");
+  //           }
+  
+  //           const previewImage =
+  //             imagePreview ||
+  //             (form.imageFile ? URL.createObjectURL(form.imageFile) : "");
+  
+  //           const userDataForCard: UserCardData = {
+  //             name: form.memberName,
+  //             father: form.fatherName,
+  //             mobile: form.mobile,
+  //             receipt: memberId,
+  //             image: previewImage,
+  //           };
+
+  //           handleSuccessfulRegistration(memberId, userDataForCard);
+  
+  //           // Reset form
+  //           setForm({
+  //             memberName: "",
+  //             fatherName: "",
+  //             businessNature: "",
+  //             organizationPosition: "",
+  //             residenceAddress: "",
+  //             officeAddress: "",
+  //             residencePhone: "",
+  //             officePhone: "",
+  //             mobile: "",
+  //             whatsapp: "",
+  //             email: "",
+  //             pan: "",
+  //             aadhaar: "",
+  //             education: "",
+  //             dob: "",
+  //             marriageDate: "",
+  //             bloodGroup: "",
+  //             tshirtSize: "",
+  //             socialWork: "",
+  //             specialAchievement: "",
+  //             membershipType: "life",
+  //             state: "",
+  //             district: "",
+  //             otherEducation: "",
+  //             imageFile: undefined,
+  //           });
+  
+  //           setSelectedVidhansabha("");
+  //           setImagePreview("");
+  //           setErrors({});
+  
+  //           const imageInput = document.getElementById("imageInput");
+  //           if (imageInput instanceof HTMLInputElement) imageInput.value = "";
+  
+  //         } catch (error) {
+  //           console.error("❌ Error:", error);
+  //           alert(`Payment verification failed: ${error.response?.data?.error || error.message}`);
+  //         }
+  //       },
+  
+  //       modal: {
+  //         ondismiss: function () {
+  //           console.log("❌ Payment cancelled by user");
+  //           alert("Payment cancelled");
+  //         },
+  //       },
+  //     };
+  
+  //     if (!window.Razorpay) {
+  //       alert("Razorpay SDK failed to load.");
+  //       return;
+  //     }
+  
+  //     const rzp = new window.Razorpay(options);
+  //     rzp.open();
+  //   } catch (error) {
+  //     console.error("❌ Razorpay Error:", error);
+  //     alert("Payment initialization failed: " + error.message);
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+    
     if (!validateForm()) return;
-  
+    
     setLoading(true);
-  
+    
     try {
       const { data } = await Instance.post("/api/membership/create-order");
-  
+      
+      setLoading(false);
+      
       const options = {
         key: data.key,
         amount: data.order.amount,
@@ -1618,152 +1784,170 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
         order_id: data.order.id,
         name: "OBC Mahasabha",
         description: "Membership Fee ₹251",
-  
+        
+        modal: {
+          ondismiss: function() {
+            setLoading(false);
+            alert("Payment cancelled");
+          },
+        },
+        
         handler: async function (response) {
           try {
+            // ✅ Step 1: Verify payment
             const verifyRes = await Instance.post("/api/membership/verify-payment", {
               razorpay_order_id: response.razorpay_order_id,
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
+            });
+            
+            if (verifyRes.data.success) {
+              // ✅ Step 2: Show saving loading
+              setSavingData(true);  // 🔥 YE IMPORTANT HAI
               
-            });
-  
-           
-            const formDataToSend = new FormData();
-            formDataToSend.append("memberName", form.memberName);
-            formDataToSend.append("fatherName", form.fatherName);
-            formDataToSend.append("businessNature", form.businessNature);
-            formDataToSend.append("organizationPosition", form.organizationPosition);
-            formDataToSend.append("residenceAddress", form.residenceAddress);
-            formDataToSend.append("officeAddress", form.officeAddress);
-            formDataToSend.append("residencePhone", form.residencePhone);
-            formDataToSend.append("officePhone", form.officePhone);
-            formDataToSend.append("mobile", form.mobile);
-            formDataToSend.append("whatsapp", form.whatsapp);
-            formDataToSend.append("email", form.email);
-            formDataToSend.append("pan", form.pan);
-            formDataToSend.append("aadhaar", form.aadhaar);
-            formDataToSend.append("education", form.education);
-            formDataToSend.append("otherEducation", form.otherEducation);
-            formDataToSend.append("dob", form.dob);
-            formDataToSend.append("marriageDate", form.marriageDate || "");
-            formDataToSend.append("bloodGroup", form.bloodGroup);
-            formDataToSend.append("tshirtSize", form.tshirtSize);
-            formDataToSend.append("socialWork", form.socialWork);
-            formDataToSend.append("specialAchievement", form.specialAchievement);
-            formDataToSend.append("membershipType", form.membershipType);
-            formDataToSend.append("state", form.state);
-            formDataToSend.append("district", form.district);
-            formDataToSend.append("vidhansabha", selectedVidhansabha);
-            formDataToSend.append("membershipFee", "251");
-            formDataToSend.append("razorpay_payment_id", response.razorpay_payment_id);
-            formDataToSend.append("razorpay_order_id", response.razorpay_order_id);
-  
-          
-            if (form.imageFile) {
-              formDataToSend.append("imageFile", form.imageFile);
-            }
-  
-            console.log("📤 Sending registration data to backend...");
-  
-            const registerRes = await Instance.post(
-              "/api/membership/register",
-              formDataToSend,
-              {
-                headers: {
-                  "Content-Type": "multipart/form-data",
-                },
-                timeout: 30000,
+              // ✅ Step 3: Save membership data
+              const formDataToSend = new FormData();
+              formDataToSend.append("memberName", form.memberName);
+              formDataToSend.append("fatherName", form.fatherName);
+              formDataToSend.append("businessNature", form.businessNature);
+              formDataToSend.append("organizationPosition", form.organizationPosition);
+              formDataToSend.append("residenceAddress", form.residenceAddress);
+              formDataToSend.append("officeAddress", form.officeAddress);
+              formDataToSend.append("residencePhone", form.residencePhone);
+              formDataToSend.append("officePhone", form.officePhone);
+              formDataToSend.append("mobile", form.mobile);
+              formDataToSend.append("whatsapp", form.whatsapp);
+              formDataToSend.append("email", form.email);
+              formDataToSend.append("pan", form.pan);
+              formDataToSend.append("aadhaar", form.aadhaar);
+              formDataToSend.append("education", form.education);
+              formDataToSend.append("otherEducation", form.otherEducation);
+              formDataToSend.append("dob", form.dob);
+              formDataToSend.append("marriageDate", form.marriageDate || "");
+              formDataToSend.append("bloodGroup", form.bloodGroup);
+              formDataToSend.append("tshirtSize", form.tshirtSize);
+              formDataToSend.append("socialWork", form.socialWork);
+              formDataToSend.append("specialAchievement", form.specialAchievement);
+              formDataToSend.append("membershipType", form.membershipType);
+              formDataToSend.append("state", form.state);
+              formDataToSend.append("district", form.district);
+              formDataToSend.append("vidhansabha", selectedVidhansabha);
+              formDataToSend.append("membershipFee", "251");
+              formDataToSend.append("razorpay_payment_id", response.razorpay_payment_id);
+              formDataToSend.append("razorpay_order_id", response.razorpay_order_id);
+              
+              if (form.imageFile) {
+                formDataToSend.append("imageFile", form.imageFile);
               }
-            );
-  
-            const memberId = registerRes?.data?.memberId;
-  
-            if (!memberId) {
-              throw new Error("Member ID not received");
+              
+              const registerRes = await Instance.post(
+                "/api/membership/register",
+                formDataToSend,
+                {
+                  headers: { "Content-Type": "multipart/form-data" },
+                  timeout: 30000,
+                }
+              );
+              
+              // ✅ Step 4: Saving complete
+              setSavingData(false);
+              
+              const memberId = registerRes?.data?.memberId;
+              if (!memberId) throw new Error("Member ID not received");
+              
+              const userDataForCard: UserCardData = {
+                name: form.memberName,
+                father: form.fatherName,
+                mobile: form.mobile,
+                receipt: memberId,
+                image: imagePreview,
+              };
+              
+              // ✅ Step 5: Show success and ID card
+              handleSuccessfulRegistration(memberId, userDataForCard);
+              
+              // Reset form
+              setForm({
+                memberName: "",
+                fatherName: "",
+                businessNature: "",
+                organizationPosition: "",
+                residenceAddress: "",
+                officeAddress: "",
+                residencePhone: "",
+                officePhone: "",
+                mobile: "",
+                whatsapp: "",
+                email: "",
+                pan: "",
+                aadhaar: "",
+                education: "",
+                dob: "",
+                marriageDate: "",
+                bloodGroup: "",
+                tshirtSize: "",
+                socialWork: "",
+                specialAchievement: "",
+                membershipType: "life",
+                state: "",
+                district: "",
+                otherEducation: "",
+                imageFile: undefined,
+              });
+              
+              setSelectedVidhansabha("");
+              setImagePreview("");
+              setErrors({});
+              
+            } else {
+              alert("Payment verification failed!");
             }
-  
-            const previewImage =
-              imagePreview ||
-              (form.imageFile ? URL.createObjectURL(form.imageFile) : "");
-  
-            const userDataForCard: UserCardData = {
-              name: form.memberName,
-              father: form.fatherName,
-              mobile: form.mobile,
-              receipt: memberId,
-              image: previewImage,
-            };
-
-            handleSuccessfulRegistration(memberId, userDataForCard);
-  
-            // Reset form
-            setForm({
-              memberName: "",
-              fatherName: "",
-              businessNature: "",
-              organizationPosition: "",
-              residenceAddress: "",
-              officeAddress: "",
-              residencePhone: "",
-              officePhone: "",
-              mobile: "",
-              whatsapp: "",
-              email: "",
-              pan: "",
-              aadhaar: "",
-              education: "",
-              dob: "",
-              marriageDate: "",
-              bloodGroup: "",
-              tshirtSize: "",
-              socialWork: "",
-              specialAchievement: "",
-              membershipType: "life",
-              state: "",
-              district: "",
-              otherEducation: "",
-              imageFile: undefined,
-            });
-  
-            setSelectedVidhansabha("");
-            setImagePreview("");
-            setErrors({});
-  
-            const imageInput = document.getElementById("imageInput");
-            if (imageInput instanceof HTMLInputElement) imageInput.value = "";
-  
           } catch (error) {
+            setSavingData(false);  // ✅ Hide loading on error
             console.error("❌ Error:", error);
-            alert(`Payment verification failed: ${error.response?.data?.error || error.message}`);
+            alert(`Registration failed: ${error.response?.data?.message || error.message}`);
           }
-        },
-  
-        modal: {
-          ondismiss: function () {
-            console.log("❌ Payment cancelled by user");
-            alert("Payment cancelled");
-          },
-        },
+        }
       };
-  
+      
       if (!window.Razorpay) {
         alert("Razorpay SDK failed to load.");
+        setLoading(false);
         return;
       }
-  
+      
       const rzp = new window.Razorpay(options);
       rzp.open();
+      
     } catch (error) {
       console.error("❌ Razorpay Error:", error);
       alert("Payment initialization failed: " + error.message);
-    } finally {
       setLoading(false);
     }
   };
-  
+
+
+
+
+  // Add this component before your return statement
+const LoadingOverlay = ({ message }) => (
+  <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+    <div className="bg-white rounded-xl p-8 text-center min-w-[320px] shadow-2xl">
+      <div className="w-16 h-16 border-4 border-[#e87722] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+      <p className="text-[#0f1d3a] font-bold text-lg mb-2">{message}</p>
+      <p className="text-gray-500 text-sm">कृपया प्रतीक्षा करें...</p>
+    </div>
+  </div>
+);
+
+
   return (
     <div className="font-sans bg-[#f5f0ea] min-h-screen">
+
+{savingData && (
+      <LoadingOverlay message="आपका पंजीकरण सहेजा जा रहा है..." />
+    )}
+      
       {/* ── Hero ── */}
       <div className="bg-gradient-to-tr from-[#0f1d3a] via-[#1e3160] to-[#162448] py-6 px-4 text-center relative overflow-hidden ">
         <div className="absolute -top-16 -right-16 w-60 h-60 rounded-full bg-[#f4a92a] opacity-10 pointer-events-none" />
