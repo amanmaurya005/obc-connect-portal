@@ -46,18 +46,18 @@ const AdminLayout: React.FC = () => {
 
   const handleLogout = async () => {
     setIsLoggingOut(true);
+    setShowLogoutMessage(true);
+    
     try {
-      await logout();
-      setShowLogoutMessage(true);
-      
-      // Hide message after 3 seconds and redirect
-      setTimeout(() => {
-        setShowLogoutMessage(false);
-        navigate("/admin/login");
-      }, 2000);
+      await logout();  // ✅ This will redirect to login
     } catch (error) {
       console.error("Logout error:", error);
+    } finally {
       setIsLoggingOut(false);
+      // Message will auto hide after 2 seconds
+      setTimeout(() => {
+        setShowLogoutMessage(false);
+      }, 2000);
     }
   };
 
