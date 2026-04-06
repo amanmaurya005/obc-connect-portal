@@ -926,17 +926,86 @@ const [saveProgress, setSaveProgress] = useState(0);
 
   const downloadCard = async () => {
     if (!cardRef.current) return;
-
-    const canvas = await html2canvas(cardRef.current, {
-      useCORS: true,
-      scale: 2,
-      backgroundColor: "#ffffff",
-    });
-
-    const link = document.createElement("a");
-    link.download = "id-card.png";
-    link.href = canvas.toDataURL("image/png");
-    link.click();
+  
+    try {
+      const canvas = await html2canvas(cardRef.current, {
+        useCORS: true,
+        scale: 2,
+        backgroundColor: "#ffffff",
+      });
+  
+      const link = document.createElement("a");
+      link.download = "id-card.png";
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+  
+      showSwipeNotifications("✅ आईडी कार्ड डाउनलोड सफल/Successfully", "#FF9933"); // केसरिया
+    } catch (error) {
+      console.error("Error downloading card:", error);
+      showSwipeNotifications("❌ डाउनलोड विफल, पुनः प्रयास करें", "#138808"); // हरा
+    }
+  };
+  
+  // राइट से सेंटर में स्वाइप होकर आने वाला नोटिफिकेशन (इंडियन फ्लैग कलर्स के साथ)
+  const showSwipeNotifications = (message, primaryColor) => {
+    // पुराना नोटिफिकेशन हटाएँ
+    const oldNotif = document.getElementById("swipe-notification");
+    if (oldNotif) oldNotif.remove();
+  
+    const toast = document.createElement("div");
+    toast.id = "swipe-notification";
+    toast.innerText = message;
+    
+    // तिरंगा ग्रेडिएंट बैकग्राउंड (भारतीय ध्वज के रंग)
+    if (primaryColor === "#FF9933") {
+      // सफलता पर - तिरंगा ग्रेडिएंट
+      toast.style.background = "linear-gradient(135deg, #FF9933 0%, #FFFFFF 50%, #138808 100%)";
+      toast.style.color = "#000";
+      toast.style.fontWeight = "700";
+      toast.style.textShadow = "0 0 2px rgba(255,255,255,0.5)";
+    } else {
+      // एरर पर - लाल और हरा मिक्स
+      toast.style.background = "linear-gradient(135deg, #FF0000 0%, #138808 100%)";
+      toast.style.color = "#fff";
+    }
+    
+    // शुरुआत में राइट साइड पर (छिपा हुआ)
+    toast.style.position = "fixed";
+    toast.style.top = "20px";
+    toast.style.right = "-400px";
+    toast.style.padding = "14px 32px";
+    toast.style.borderRadius = "50px";
+    toast.style.fontSize = "18px";
+    toast.style.fontWeight = "600";
+    toast.style.fontFamily = "sans-serif";
+    toast.style.boxShadow = "0 10px 25px rgba(0,0,0,0.2)";
+    toast.style.zIndex = "10000";
+    toast.style.textAlign = "center";
+    toast.style.minWidth = "280px";
+    toast.style.maxWidth = "90%";
+    toast.style.whiteSpace = "nowrap";
+    toast.style.backdropFilter = "blur(10px)";
+    toast.style.border = "2px solid rgba(255,255,255,0.5)";
+    toast.style.cursor = "pointer";
+    toast.style.letterSpacing = "0.5px";
+    
+    // एनिमेशन के लिए ट्रांजिशन
+    toast.style.transition = "right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
+    
+    document.body.appendChild(toast);
+    
+    // राइट से सेंटर में आएगा
+    setTimeout(() => {
+      toast.style.right = "50%";
+      toast.style.transform = "translateX(50%)";
+    }, 50);
+    
+    // 3 सेकंड बाद वापस राइट को जाएगा
+    setTimeout(() => {
+      toast.style.right = "-400px";
+      toast.style.transform = "translateX(0)";
+      setTimeout(() => toast.remove(), 500);
+    }, 4500);
   };
 
   const downloadReceipt = async () => {
@@ -949,17 +1018,67 @@ const [saveProgress, setSaveProgress] = useState(0);
         backgroundColor: "#f38cb4",
         logging: false,
       });
-      
+  
       const link = document.createElement("a");
       link.download = `receipt_${receiptData.receiptNumber}.png`;
       link.href = canvas.toDataURL();
       link.click();
-      
-      alert("✅ रसीद डाउनलोड हो गई!");
+  
+      showSwipeNotification("✅ रसीद डाउनलोड सफल/Successfully", "#10b981");
     } catch (error) {
       console.error("Error downloading receipt:", error);
-      alert("रसीद डाउनलोड करने में त्रुटि हुई");
+      showSwipeNotification("❌ डाउनलोड विफल, पुनः प्रयास करें", "#ef4444");
     }
+  };
+  
+  // राइट से सेंटर में स्वाइप होकर आने वाला नोटिफिकेशन
+  const showSwipeNotification = (message, bgColor) => {
+    // पुराना नोटिफिकेशन हटाएँ
+    const oldNotif = document.getElementById("swipe-notification");
+    if (oldNotif) oldNotif.remove();
+  
+    const toast = document.createElement("div");
+    toast.id = "swipe-notification";
+    toast.innerText = message;
+    
+    // शुरुआत में राइट साइड पर (छिपा हुआ)
+    toast.style.position = "fixed";
+    toast.style.top = "20px";
+    toast.style.right = "-400px"; // स्क्रीन के बाहर दाएं तरफ
+    toast.style.backgroundColor = bgColor;
+    toast.style.color = "white";
+    toast.style.padding = "14px 32px";
+    toast.style.borderRadius = "50px";
+    toast.style.fontSize = "18px";
+    toast.style.fontWeight = "600";
+    toast.style.fontFamily = "sans-serif";
+    toast.style.boxShadow = "0 10px 25px rgba(0,0,0,0.2)";
+    toast.style.zIndex = "10000";
+    toast.style.textAlign = "center";
+    toast.style.minWidth = "250px";
+    toast.style.maxWidth = "90%";
+    toast.style.whiteSpace = "nowrap";
+    toast.style.backdropFilter = "blur(10px)";
+    toast.style.border = "1px solid rgba(255,255,255,0.3)";
+    toast.style.cursor = "pointer";
+    
+    // ट्रांजिशन - स्वाइप इफेक्ट के लिए
+    toast.style.transition = "right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
+    
+    document.body.appendChild(toast);
+    
+    // थोड़ी देर बाद राइट से सेंटर में आएगा
+    setTimeout(() => {
+      toast.style.right = "50%";
+      toast.style.transform = "translateX(50%)"; // सेंटर में लाने के लिए
+    }, 50);
+    
+    // 2.5 सेकंड बाद वापस राइट को स्वाइप करके जाएगा
+    setTimeout(() => {
+      toast.style.right = "-400px";
+      toast.style.transform = "translateX(0)";
+      setTimeout(() => toast.remove(), 500);
+    }, 4500);
   };
 
   const numberToHindiWords = (n: unknown) => {

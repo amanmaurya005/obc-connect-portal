@@ -25,7 +25,7 @@ export const adminLogin = async (req, res) => {
       });
     }
     
-    // Generate token
+ 
     const token = jwt.sign(
       { id: admin._id, email: admin.email },
       process.env.JWT_SECRET || 'your_secret_key',
@@ -37,8 +37,8 @@ export const adminLogin = async (req, res) => {
     // ✅ Set cookie
     res.cookie('adminToken', token, {
       httpOnly: true,
-      secure: false,  // Set to false for local development (HTTP)
-      sameSite: 'lax', // Use 'lax' for development
+      secure: false,  
+      sameSite: 'lax', 
       maxAge: 7 * 24 * 60 * 60 * 1000,
       path: '/'
     });
@@ -62,7 +62,7 @@ export const adminLogin = async (req, res) => {
 export const verifyAdmin = async (req, res) => {
   try {
     console.log("🔐 Verify endpoint hit");
-    console.log("Cookies received:", req.cookies);  // ✅ Debug log
+    console.log("Cookies received:", req.cookies); 
     
     // Get token from cookie
     const token = req.cookies?.adminToken;
@@ -107,7 +107,7 @@ export const adminLogout = async (req, res) => {
     // Clear the cookie
     res.clearCookie('adminToken', {
       httpOnly: true,
-      secure: false,  // Set to false for local development
+      secure: false,  
       sameSite: 'lax',
       path: '/'
     });
