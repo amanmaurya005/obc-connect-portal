@@ -26,16 +26,16 @@ const formatDate = (date) => {
   if (!date) return "-";
   
   try {
-    // Handle YYYY-MM-DD format directly (without timezone issues)
+   
     if (typeof date === "string" && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
       const [year, month, day] = date.split("-");
       return `${day}/${month}/${year}`;
     }
     
-    // Handle Date object or other formats
+    
     const d = new Date(date);
     
-    // Check if date is valid
+   
     if (isNaN(d.getTime())) return "-";
     
     // Format as DD/MM/YYYY
