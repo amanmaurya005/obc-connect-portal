@@ -14,11 +14,41 @@ const razorpay = new Razorpay({
 
 
 
+// const formatDate = (date) => {
+//   if (!date) return "-";
+//   const d = new Date(date);
+//   return d.toLocaleDateString("en-IN"); 
+// };
+
+
+
 const formatDate = (date) => {
   if (!date) return "-";
-  const d = new Date(date);
-  return d.toLocaleDateString("en-IN"); 
+  
+  try {
+   
+    if (typeof date === "string" && date.match(/^\d{4}-\d{2}-\d{2}$/)) {
+      const [year, month, day] = date.split("-");
+      return `${day}/${month}/${year}`;
+    }
+    
+    
+    const d = new Date(date);
+    
+   
+    if (isNaN(d.getTime())) return "-";
+    
+    // Format as DD/MM/YYYY
+    const day = String(d.getDate()).padStart(2, "0");
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const year = d.getFullYear();
+    
+    return `${day}/${month}/${year}`;
+  } catch (error) {
+    return "-";
+  }
 };
+
 
 
 const numberToHindiWords = (num) => {
