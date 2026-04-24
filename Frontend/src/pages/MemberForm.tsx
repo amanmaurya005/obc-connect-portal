@@ -1154,7 +1154,7 @@ const [saveProgress, setSaveProgress] = useState(0);
     setUserData(null);
     setLoading(false);
 
-    // Reset form data
+ 
     setForm({
       memberName: "",
       fatherName: "",
@@ -1551,11 +1551,11 @@ const [saveProgress, setSaveProgress] = useState(0);
   };
 
 
-  // District change होने पर vidhansabha list update करें
+ 
 useEffect(() => {
   if (form.district && districtVidhansabhaMap[form.district]) {
     setDistrictVidhansabhas(districtVidhansabhaMap[form.district]);
-    setSelectedVidhansabha(""); // reset previous selection
+    setSelectedVidhansabha("");
   } else {
     setDistrictVidhansabhas([]);
   }
@@ -1564,12 +1564,12 @@ useEffect(() => {
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-    // Image validation (required)
+   
     if (!form.imageFile) {
       newErrors.imageFile = "प्रोफाइल फोटो अपलोड करना आवश्यक है";
     }
 
-    // Required fields
+   
     if (!form.memberName.trim()) newErrors.memberName = "यह क्षेत्र आवश्यक है";
     if (!form.fatherName.trim()) newErrors.fatherName = "यह क्षेत्र आवश्यक है";
     if (!form.residenceAddress.trim())
