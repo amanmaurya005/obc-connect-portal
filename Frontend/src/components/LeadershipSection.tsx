@@ -32,11 +32,11 @@ const LeadershipSection = () => {
   transition={{ duration: 0.6, delay: 0.2 }}
   className="relative flex justify-center"
 >
-  <div className="w-[280px] sm:w-[320px] md:w-[360px] h-[420px] overflow-hidden rounded-2xl border-4 border-saffron-light shadow-lg">
+  <div className="w-[280px] sm:w-[320px] md:w-[360px] h-[420px] overflow-hidden rounded-2xl border-4 border-saffron-light shadow-lg transform">
     <img
       src={poster1}
       alt="राष्ट्रीय अध्यक्ष - धर्मेन्द्र चौधरी"
-      className="w-full h-full object-cover"
+      className="w-full h-full object-cover scale-x-[-1]"
       loading="lazy"
     />
   </div>

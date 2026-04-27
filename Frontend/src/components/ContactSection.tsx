@@ -62,11 +62,33 @@ const ContactSection = () => {
             <p className="text-muted-foreground text-sm">सोमवार से शनिवार, सुबह 10 - शाम 6 बजे</p>
           </motion.a>
 
-          {/* Address Card */}
+          {/* प्रधान कार्यालय Card */}
           <motion.div
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.3 }}
+            className="group bg-card rounded-2xl p-8 border border-border shadow-sm text-center"
+          >
+            <div className="w-16 h-16 rounded-full bg-gradient-saffron flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
+              <MapPin className="h-8 w-8 text-primary-foreground" />
+            </div>
+            <h3 className="text-xl font-heading font-bold text-foreground mb-2">प्रधान कार्यालय</h3>
+            <p className="text-muted-foreground leading-relaxed">
+            प्लॉट नंबर: 115, 116,
+              <br />
+              विनायक रेजीडेंसी - I(F3), 
+              <br />
+              विनायक विहार डी, हरनाथपुरा,
+              <br />
+              कलवार रोड, जयपुर - 302012
+            </p>          
+          </motion.div>
+
+          {/* कार्यालय Card */}
+          <motion.div
+            initial={{ opacity: 0, y: 30 }}
+            animate={isInView ? { opacity: 1, y: 0 } : {}}
+            transition={{ duration: 0.5, delay: 0.4 }}
             className="group bg-card rounded-2xl p-8 border border-border shadow-sm text-center"
           >
             <div className="w-16 h-16 rounded-full bg-gradient-saffron flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">

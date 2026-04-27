@@ -317,7 +317,8 @@ interface GalleryItem {
 }
 
 type Category = "सामाजिक" | "शिक्षा" | "स्वास्थ्य" | "सम्मान" | "जागरूकता";
-type FilterOption = "all" | Category;
+type SocialSubFilter = "वृक्षारोपण" | "रक्तदान" | "सामूहिक विवाह";
+type FilterOption = "all" | Category | SocialSubFilter;
 
 // ─── Data ─────────────────────────────────────────────────
 const galleryData: GalleryItem[] = [
@@ -442,6 +443,12 @@ const filterOptions: { label: string; value: FilterOption }[] = [
   { label: "स्वास्थ्य",    value: "स्वास्थ्य"  },
   { label: "सम्मान",       value: "सम्मान"     },
   { label: "जागरूकता",     value: "जागरूकता"   },
+];
+
+const socialDropdownOptions: { label: SocialSubFilter; value: SocialSubFilter }[] = [
+  { label: "वृक्षारोपण", value: "वृक्षारोपण" },
+  { label: "रक्तदान", value: "रक्तदान" },
+  { label: "सामूहिक विवाह", value: "सामूहिक विवाह" },
 ];
 
 // ─── Fade-up hook ──────────────────────────────────────────
@@ -800,6 +807,7 @@ function Popup({ items, currentIndex, onClose, onNext, onPrev, onDot }: PopupPro
 // ─── Main Component ────────────────────────────────────────
 export default function GallerySection() {
   const [activeFilter, setActiveFilter] = useState<FilterOption>("all");
+  const [socialDropdownOpen, setSocialDropdownOpen] = useState(false);
   const [popupOpen, setPopupOpen]       = useState(false);
   const [popupIndex, setPopupIndex]     = useState(0);
 
@@ -807,9 +815,25 @@ export default function GallerySection() {
   const { ref: statsRef,  visible: statsVisible  } = useFadeUp();
   const { ref: filterRef, visible: filterVisible } = useFadeUp();
 
-  const filtered = galleryData.filter(
-    (item) => activeFilter === "all" || item.cat === activeFilter
-  );
+  const isSocialFilter =
+    activeFilter === "सामाजिक" ||
+    activeFilter === "वृक्षारोपण" ||
+    activeFilter === "रक्तदान" ||
+    activeFilter === "सामूहिक विवाह";
+
+  const filtered = galleryData.filter((item) => {
+    if (activeFilter === "all") return true;
+    if (isSocialFilter) return item.cat === "सामाजिक";
+    return item.cat === activeFilter;
+  });
+
+  const socialFilterActive = isSocialFilter;
+
+  const handleFilterChange = (value: FilterOption) => {
+    setActiveFilter(value);
+    setPopupIndex(0);
+    setSocialDropdownOpen(false);
+  };
 
   const openPopup = (index: number) => {
     setPopupIndex(index);
@@ -843,7 +867,7 @@ export default function GallerySection() {
           padding: "80px 24px",
           fontFamily: "'Noto Sans Devanagari', sans-serif",
           position: "relative",
-          overflow: "hidden",
+          overflow: "visible",
         }}
       >
         {/* Top pattern strip */}
@@ -939,6 +963,9 @@ export default function GallerySection() {
             flexWrap: "wrap",
             justifyContent: "center",
             gap: "10px",
+            position: "relative",
+            zIndex: 200,
+            overflow: "visible",
             opacity: filterVisible ? 1 : 0,
             transform: filterVisible ? "translateY(0)" : "translateY(36px)",
             transition: "opacity 0.6s ease 150ms, transform 0.6s cubic-bezier(0.23,1,0.32,1) 150ms",
@@ -946,10 +973,100 @@ export default function GallerySection() {
         >
           {filterOptions.map((opt) => {
             const isActive = activeFilter === opt.value;
+            if (opt.value === "सामाजिक") {
+              return (
+                <div
+                  key={opt.value}
+                  style={{ position: "relative" }}
+                  onMouseEnter={() => setSocialDropdownOpen(true)}
+                  onMouseLeave={() => setSocialDropdownOpen(false)}
+                >
+                  <button
+                    type="button"
+                    onClick={() => handleFilterChange(opt.value)}
+                    style={{
+                      padding: "6px 18px",
+                      borderRadius: "100px",
+                      fontSize: "0.82rem",
+                      fontWeight: 700,
+                      cursor: "pointer",
+                      fontFamily: "'Noto Sans Devanagari', sans-serif",
+                      border: socialFilterActive ? "1.5px solid transparent" : "1.5px solid rgba(255,107,0,0.4)",
+                      background: socialFilterActive
+                        ? "linear-gradient(135deg, #FF6B00, #CC3300)"
+                        : "#fff",
+                      color: socialFilterActive ? "#fff" : "#111",
+                      boxShadow: socialFilterActive ? "0 4px 15px rgba(255,107,0,0.4)" : "none",
+                      transition: "all 0.22s ease",
+                      display: "inline-flex",
+                      alignItems: "center",
+                      gap: "8px",
+                    }}
+                  >
+                    {opt.label}
+                    <span
+                      style={{
+                        fontSize: "0.7rem",
+                        transform: socialDropdownOpen ? "rotate(180deg)" : "rotate(0deg)",
+                        transition: "transform 0.2s ease",
+                      }}
+                    >
+                      ▼
+                    </span>
+                  </button>
+
+                  {socialDropdownOpen && (
+                    <div
+                      style={{
+                        position: "absolute",
+                        top: "calc(100% + 8px)",
+                        left: "50%",
+                        transform: "translateX(-50%)",
+                        minWidth: "180px",
+                        background: "#fff",
+                        border: "1px solid rgba(255,107,0,0.18)",
+                        borderRadius: "12px",
+                        boxShadow: "0 12px 30px rgba(0,0,0,0.12)",
+                        padding: "8px",
+                        zIndex: 100,
+                      }}
+                    >
+                      {socialDropdownOptions.map((socialOpt) => {
+                        const isSocialActive = activeFilter === socialOpt.value;
+                        return (
+                          <button
+                            key={socialOpt.value}
+                            type="button"
+                            onClick={() => handleFilterChange(socialOpt.value)}
+                            style={{
+                              width: "100%",
+                              textAlign: "left",
+                              padding: "10px 12px",
+                              borderRadius: "8px",
+                              border: "none",
+                              background: isSocialActive ? "rgba(255,107,0,0.10)" : "transparent",
+                              color: isSocialActive ? "#CC3300" : "#111",
+                              fontFamily: "'Noto Sans Devanagari', sans-serif",
+                              fontSize: "0.82rem",
+                              fontWeight: 600,
+                              cursor: "pointer",
+                            }}
+                          >
+                            {socialOpt.label}
+                          </button>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
+              );
+            }
+
             return (
               <button
                 key={opt.value}
-                onClick={() => { setActiveFilter(opt.value); setPopupIndex(0); }}
+                type="button"
+                onClick={() => handleFilterChange(opt.value)}
                 style={{
                   padding: "6px 18px",
                   borderRadius: "100px",
@@ -985,6 +1102,8 @@ export default function GallerySection() {
             display: "grid",
             gridTemplateColumns: "repeat(auto-fill, minmax(240px, 1fr))",
             gap: "20px",
+            position: "relative",
+            zIndex: 1,
           }}
         >
           {filtered.map((item, i) => (

@@ -534,7 +534,7 @@ const Donations = () => {
                     <input
                       type="text"
                       name="customAmount"
-                      placeholder="अन्य राशि दर्ज करें (अधिकतम ₹50,000)"
+                      placeholder="अन्य राशि दर्ज करें"
                       value={form.amount === "custom" ? form.customAmount : ""}
                       onFocus={() => setForm((f) => ({ ...f, amount: "custom" }))}
                       onChange={handleChange}

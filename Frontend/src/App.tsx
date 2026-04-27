@@ -14,6 +14,7 @@ import Donations from "./pages/Donations";
 import NotFound from "./pages/NotFound";
 import Discount from "./pages/Discount";
 import DetailedGallery from "./pages/DetailedGallery";
+import Team from "./pages/Team";
 
 import LegalIndex from "./pages/legaleIndex";
 import PrivacyPolicy from "./pages/legal/PrivacyPolicy";
@@ -143,6 +144,10 @@ const router = createBrowserRouter([
       {
         path: "/gallery",
         element: <DetailedGallery />,
+      },
+      {
+        path: "/team",
+        element: <Team />,
       },
     ],
   },

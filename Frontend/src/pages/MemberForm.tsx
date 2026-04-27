@@ -777,11 +777,10 @@ function Dropdown({
           setOpen((v) => !v);
           setSearch("");
         }}
-        className={`w-full border rounded-lg px-4 py-2 text-sm text-left focus:outline-none focus:ring-4 transition ${
-          disabled
+        className={`w-full border rounded-lg px-4 py-2 text-sm text-left focus:outline-none focus:ring-4 transition ${disabled
             ? "border-gray-200 bg-gray-50 text-gray-400 cursor-not-allowed"
             : "border-gray-200 bg-white text-[#1a1a2e] focus:border-[#e87722] focus:ring-[#e87722]/20"
-        }`}
+          }`}
       >
         {value || placeholder}
       </button>
@@ -812,11 +811,10 @@ function Dropdown({
                     setOpen(false);
                     setSearch("");
                   }}
-                  className={`w-full text-left px-4 py-2 text-sm transition ${
-                    o === value
+                  className={`w-full text-left px-4 py-2 text-sm transition ${o === value
                       ? "bg-orange-50 text-[#0f2056] font-semibold"
                       : "hover:bg-gray-50 text-gray-700"
-                  }`}
+                    }`}
                 >
                   {o}
                 </button>
@@ -876,9 +874,9 @@ export default function MembershipPage() {
   const [isValid, setIsValid] = useState(false);
   const [loading, setLoading] = useState(false);
   const [receiptData, setReceiptData] = useState(null);
-const [showReceipt, setShowReceipt] = useState(false);
-const [savingData, setSavingData] = useState(false); 
-const [saveProgress, setSaveProgress] = useState(0);
+  const [showReceipt, setShowReceipt] = useState(false);
+  const [savingData, setSavingData] = useState(false);
+  const [saveProgress, setSaveProgress] = useState(0);
 
 
   const cardRef = useRef<HTMLDivElement | null>(null);
@@ -928,36 +926,36 @@ const [saveProgress, setSaveProgress] = useState(0);
 
   const downloadCard = async () => {
     if (!cardRef.current) return;
-  
+
     try {
       const canvas = await html2canvas(cardRef.current, {
         useCORS: true,
         scale: 2,
         backgroundColor: "#ffffff",
       });
-  
+
       const link = document.createElement("a");
       link.download = "id-card.png";
       link.href = canvas.toDataURL("image/png");
       link.click();
-  
+
       showSwipeNotifications("✅ आईडी कार्ड डाउनलोड सफल/Successfully", "#FF9933"); // केसरिया
     } catch (error) {
       console.error("Error downloading card:", error);
       showSwipeNotifications("❌ डाउनलोड विफल, पुनः प्रयास करें", "#138808"); // हरा
     }
   };
-  
+
   // राइट से सेंटर में स्वाइप होकर आने वाला नोटिफिकेशन (इंडियन फ्लैग कलर्स के साथ)
   const showSwipeNotifications = (message, primaryColor) => {
     // पुराना नोटिफिकेशन हटाएँ
     const oldNotif = document.getElementById("swipe-notification");
     if (oldNotif) oldNotif.remove();
-  
+
     const toast = document.createElement("div");
     toast.id = "swipe-notification";
     toast.innerText = message;
-    
+
     // तिरंगा ग्रेडिएंट बैकग्राउंड (भारतीय ध्वज के रंग)
     if (primaryColor === "#FF9933") {
       // सफलता पर - तिरंगा ग्रेडिएंट
@@ -970,7 +968,7 @@ const [saveProgress, setSaveProgress] = useState(0);
       toast.style.background = "linear-gradient(135deg, #FF0000 0%, #138808 100%)";
       toast.style.color = "#fff";
     }
-    
+
     // शुरुआत में राइट साइड पर (छिपा हुआ)
     toast.style.position = "fixed";
     toast.style.top = "20px";
@@ -990,18 +988,18 @@ const [saveProgress, setSaveProgress] = useState(0);
     toast.style.border = "2px solid rgba(255,255,255,0.5)";
     toast.style.cursor = "pointer";
     toast.style.letterSpacing = "0.5px";
-    
+
     // एनिमेशन के लिए ट्रांजिशन
     toast.style.transition = "right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
-    
+
     document.body.appendChild(toast);
-    
+
     // राइट से सेंटर में आएगा
     setTimeout(() => {
       toast.style.right = "50%";
       toast.style.transform = "translateX(50%)";
     }, 50);
-    
+
     // 3 सेकंड बाद वापस राइट को जाएगा
     setTimeout(() => {
       toast.style.right = "-400px";
@@ -1013,36 +1011,36 @@ const [saveProgress, setSaveProgress] = useState(0);
   const downloadReceipt = async () => {
     const element = document.getElementById("receipt-capture");
     if (!element) return;
-  
+
     try {
       const canvas = await html2canvas(element, {
         scale: 2,
         backgroundColor: "#f38cb4",
         logging: false,
       });
-  
+
       const link = document.createElement("a");
       link.download = `receipt_${receiptData.receiptNumber}.png`;
       link.href = canvas.toDataURL();
       link.click();
-  
+
       showSwipeNotification("✅ रसीद डाउनलोड सफल/Successfully", "#10b981");
     } catch (error) {
       console.error("Error downloading receipt:", error);
       showSwipeNotification("❌ डाउनलोड विफल, पुनः प्रयास करें", "#ef4444");
     }
   };
-  
+
   // राइट से सेंटर में स्वाइप होकर आने वाला नोटिफिकेशन
   const showSwipeNotification = (message, bgColor) => {
     // पुराना नोटिफिकेशन हटाएँ
     const oldNotif = document.getElementById("swipe-notification");
     if (oldNotif) oldNotif.remove();
-  
+
     const toast = document.createElement("div");
     toast.id = "swipe-notification";
     toast.innerText = message;
-    
+
     // शुरुआत में राइट साइड पर (छिपा हुआ)
     toast.style.position = "fixed";
     toast.style.top = "20px";
@@ -1063,18 +1061,18 @@ const [saveProgress, setSaveProgress] = useState(0);
     toast.style.backdropFilter = "blur(10px)";
     toast.style.border = "1px solid rgba(255,255,255,0.3)";
     toast.style.cursor = "pointer";
-    
+
     // ट्रांजिशन - स्वाइप इफेक्ट के लिए
     toast.style.transition = "right 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55)";
-    
+
     document.body.appendChild(toast);
-    
+
     // थोड़ी देर बाद राइट से सेंटर में आएगा
     setTimeout(() => {
       toast.style.right = "50%";
       toast.style.transform = "translateX(50%)"; // सेंटर में लाने के लिए
     }, 50);
-    
+
     // 2.5 सेकंड बाद वापस राइट को स्वाइप करके जाएगा
     setTimeout(() => {
       toast.style.right = "-400px";
@@ -1095,12 +1093,12 @@ const [saveProgress, setSaveProgress] = useState(0);
     userDataForCard: UserCardData
   ) => {
     if (timerId) window.clearTimeout(timerId);
-  
+
     try {
       // 🔥 Fetch receipt data from backend
       const receiptResponse = await Instance.get(`/api/membership/receipt/${memberId}`);
       setReceiptData(receiptResponse.data);
-      
+
       // Start flow immediately
       setShowSuccessMessage(true);
       setSubmitted(true);
@@ -1108,29 +1106,29 @@ const [saveProgress, setSaveProgress] = useState(0);
       setShowIdCard(false);
       setUserData(null);
       setShowReceipt(false);
-  
+
       const id1 = window.setTimeout(() => {
         setShowSuccessMessage(false);
         setShowLoading(true);
-  
+
         const id2 = window.setTimeout(() => {
           setShowLoading(false);
           setUserData(userDataForCard);
           setShowIdCard(true);
-          
+
           // 🔥 After ID card shows, show receipt modal after 1 second
           const id3 = window.setTimeout(() => {
             setShowReceipt(true);
           }, 1000);
-          
+
           setTimerId(id3);
         }, 1000);
-  
+
         setTimerId(id2);
       }, 3000);
-  
+
       setTimerId(id1);
-      
+
     } catch (error) {
       console.error("Error fetching receipt:", error);
       // Continue without receipt if error
@@ -1154,7 +1152,7 @@ const [saveProgress, setSaveProgress] = useState(0);
     setUserData(null);
     setLoading(false);
 
- 
+
     setForm({
       memberName: "",
       fatherName: "",
@@ -1431,7 +1429,7 @@ const [saveProgress, setSaveProgress] = useState(0);
     "श्री गंगानगर (Sri Ganganagar)": ["गंगानगर", "सादुलशहर", "करणपुर", "सूरतगढ़", "रायसिंहनगर", "अनूपगढ़", "संगरिया"],
     "टोंक (Tonk)": ["टोंक", "निवाई", "देवली-उनियारा", "मालपुरा", "टोडाभीम"],
     "उदयपुर (Udaipur)": ["उदयपुर", "उदयपुर ग्रामीण", "मावली", "वल्लभनगर", "सलूम्बर", "धरियावद", "गोगुन्दा", "झाड़ोल", "खेरवाड़ा"],
-  
+
     // ==================== UTTAR PRADESH (Main Districts) ====================
     "आगरा (Agra)": ["आगरा उत्तर", "आगरा दक्षिण", "आगरा ग्रामीण", "एत्मादपुर", "फतेहपुर सीकरी", "किरावली", "बाह"],
     "लखनऊ (Lucknow)": ["लखनऊ उत्तर", "लखनऊ पूर्व", "लखनऊ पश्चिम", "लखनऊ मध्य", "सरोजनीनगर", "मोहनलालगंज", "बख्शी का तालाब", "मलिहाबाद"],
@@ -1440,136 +1438,136 @@ const [saveProgress, setSaveProgress] = useState(0);
     "कानपुर नगर (Kanpur Nagar)": ["कानपुर छावनी", "कानपुर उत्तर", "कानपुर दक्षिण", "कानपुर मध्य", "शिवराजपुर", "बिल्हौर", "घाटमपुर", "कल्याणपुर"],
     "गोरखपुर (Gorakhpur)": ["गोरखपुर ग्रामीण", "गोरखपुर शहर", "चौरीचौरा", "सहजनवा", "खजनी", "बांसगांव", "पिपराइच"],
     "मेरठ (Meerut)": ["मेरठ छावनी", "मेरठ उत्तर", "मेरठ दक्षिण", "सरधना", "किठौर", "हस्तिनापुर", "सिवालखास"],
-  
+
     // ==================== MADHYA PRADESH ====================
     "भोपाल (Bhopal)": ["भोपाल उत्तर", "भोपाल दक्षिण", "भोपाल मध्य", "गोविंदपुरा", "हुजूर", "बैरागढ़", "सिवनी मालवा"],
     "इंदौर (Indore)": ["इंदौर-1", "इंदौर-2", "इंदौर-3", "इंदौर-4", "इंदौर-5", "देवास", "सांवेर", "दिपालपुर", "महू", "राउ"],
     "जबलपुर (Jabalpur)": ["जबलपुर पूर्व", "जबलपुर पश्चिम", "जबलपुर उत्तर", "जबलपुर छावनी", "पनागर", "पाटन", "सिहोरा", "मझौली"],
     "ग्वालियर (Gwalior)": ["ग्वालियर", "ग्वालियर पूर्व", "ग्वालियर दक्षिण", "भितरवार", "डबरा", "भांडेर", "मुरैना"],
-  
+
     // ==================== MAHARASHTRA ====================
     "मुंबई शहर (Mumbai City)": ["मुंबादवी", "कुलाबा", "मालाबार हिल", "मरीन लाइन्स", "ग्रांट रोड", "चर्चगेट"],
     "मुंबई उपनगर (Mumbai Suburban)": ["अंधेरी पश्चिम", "अंधेरी पूर्व", "विले पार्ले", "जोगेश्वरी", "गोरेगांव", "मालाड", "कांदिवली", "बोरीवली", "दहिसर", "भायांदर", "मीरा भयंदर"],
     "पुणे (Pune)": ["पुणे छावनी", "पुणे नगरपालिका", "शिवाजीनगर", "पर्वती", "कोथरूड", "हडपसर", "भोसरी", "खडकवासला", "चिंचवड़"],
     "नागपुर (Nagpur)": ["नागपुर दक्षिण पश्चिम", "नागपुर उत्तर", "नागपुर पूर्व", "नागपुर मध्य", "नागपुर पश्चिम", "साओनेर", "हिंगणा", "कळमेश्वर"],
     "नासिक (Nashik)": ["नासिक मध्य", "नासिक पश्चिम", "नासिक पूर्व", "नासिक ग्रामीण", "दिंडोरी", "येवला", "नंदगांव", "देवळाली"],
-  
+
     // ==================== GUJARAT ====================
     "अहमदाबाद (Ahmedabad)": ["अहमदाबाद पूर्व", "अहमदाबाद पश्चिम", "अहमदाबाद उत्तर", "नवरंगपुरा", "वस्त्राल", "निकोल", "नरोडा", "घाटलोडिया", "वीजलपुर", "मणिनगर"],
     "सूरत (Surat)": ["सूरत पूर्व", "सूरत उत्तर", "सूरत पश्चिम", "सूरत दक्षिण", "कटारगाम", "वराछा", "चोरियासी", "ओलपाड", "मांडवी"],
     "राजकोट (Rajkot)": ["राजकोट पूर्व", "राजकोट पश्चिम", "राजकोट दक्षिण", "लोधिका", "गोंडल", "जेतपुर", "धोराजी"],
     "वडोदरा (Vadodara)": ["वडोदरा शहर", "वडोदरा ग्रामीण", "पादरा", "वाघोडिया", "सावली", "करजन", "डभोई"],
-  
+
     // ==================== BIHAR ====================
     "पटना (Patna)": ["पटना साहिब", "पाटलिपुत्र", "दानापुर", "बख्तियारपुर", "फुलवारी", "मनेर", "मसौढ़ी", "पालीगंज", "पंडारक"],
     "गया (Gaya)": ["गया टाउन", "गया छावनी", "बोधगया", "बाराचट्टी", "आटरी", "बेलागंज", "कोंच", "तेकारी"],
     "भागलपुर (Bhagalpur)": ["भागलपुर", "नाथनगर", "सुल्तानगंज", "बिहपुर", "गोपालपुर", "पीरपैंती"],
     "मुजफ्फरपुर (Muzaffarpur)": ["मुजफ्फरपुर", "कांटी", "बरूराज", "पारू", "सकरा", "बोचहा", "गायघाट", "औराई"],
-  
+
     // ==================== PUNJAB ====================
     "अमृतसर (Amritsar)": ["अमृतसर पूर्व", "अमृतसर पश्चिम", "अमृतसर मध्य", "अमृतसर उत्तर", "अजनाला", "राजा संसी", "अटारी"],
     "लुधियाना (Ludhiana)": ["लुधियाना पूर्व", "लुधियाना पश्चिम", "लुधियाना उत्तर", "लुधियाना दक्षिण", "खन्ना", "समराला", "जगराओं", "रायकोट", "पायल"],
     "जालंधर (Jalandhar)": ["जालंधर पूर्व", "जालंधर पश्चिम", "जालंधर छावनी", "आदमपुर", "नकोदर", "शाहकोट", "फिल्लौर"],
-  
+
     // ==================== HARYANA ====================
     "गुरुग्राम (Gurugram)": ["गुरुग्राम", "बादशाहपुर", "सोहना", "पटौदी", "नूंह", "फिरोजपुर झिरका"],
     "फरीदाबाद (Faridabad)": ["फरीदाबाद", "निट", "बड़खल", "बल्लभगढ़", "पलवल", "हथीन", "होडल"],
     "हिसार (Hisar)": ["हिसार", "नालवा", "हांसी", "बरवाला", "उकलाना", "आदमपुर"],
-  
+
     // ==================== DELHI ====================
     "मध्य दिल्ली (Central Delhi)": ["चांदनी चौक", "मटिया महल", "बल्लीमारान", "करोल बाग", "पटेल नगर", "राजेंद्र नगर"],
     "पूर्वी दिल्ली (East Delhi)": ["लक्ष्मी नगर", "विश्वास नगर", "कृष्णा नगर", "गांधी नगर", "शाहदरा", "सीलमपुर"],
     "दक्षिण दिल्ली (South Delhi)": ["ग्रेटर कैलाश", "दिल्ली छावनी", "लाजपत नगर", "मालवीय नगर", "साकेत", "हौज खास", "देवली", "आर के पुरम"],
     "नई दिल्ली (New Delhi)": ["नई दिल्ली", "चाणक्यपुरी", "दिल्ली कैंट", "मिंटो रोड", "गोल मार्केट"],
-  
+
     // ==================== CHHATTISGARH ====================
     "रायपुर (Raipur)": ["रायपुर शहर पश्चिम", "रायपुर शहर पूर्व", "रायपुर ग्रामीण", "अभनपुर", "बलौदा बाजार", "भाटापारा", "आरंग", "धरसींवा"],
     "बिलासपुर (Bilaspur)": ["बिलासपुर", "कोटा", "लोरमी", "मुंगेली", "तखतपुर", "बिल्हा", "पथरिया", "श्रीकांत"],
     "दुर्ग (Durg)": ["दुर्ग ग्रामीण", "दुर्ग शहर", "भिलाई नगर", "वैशाली नगर", "आमदा", "पाटन"],
-  
+
     // ==================== JHARKHAND ====================
     "रांची (Ranchi)": ["रांची", "खिजरी", "हटिया", "कांके", "राहे", "सिल्ली", "नामकुम", "मांडर", "चान्हो"],
     "पूर्वी सिंहभूम (East Singhbhum)": ["जमशेदपुर पूर्व", "जमशेदपुर पश्चिम", "जमशेदपुर उत्तर", "पोटका", "बहरागोड़ा", "घाटशिला"],
     "धनबाद (Dhanbad)": ["धनबाद", "सिंदरी", "बोकारो", "चंदनकियारी", "झरिया", "बाघमारा"],
-  
+
     // ==================== UTTARAKHAND ====================
     "देहरादून (Dehradun)": ["देहरादून छावनी", "रायपुर", "धरमपुर", "मसूरी", "ऋषिकेश", "विकासनगर", "भानियावाला", "डोईवाला", "चकराता"],
     "हरिद्वार (Haridwar)": ["हरिद्वार", "भेल", "भगवानपुर", "ज्वालापुर", "लक्सर", "खानपुर", "मंगलौर"],
     "नैनीताल (Nainital)": ["नैनीताल", "हल्द्वानी", "काशीपुर", "रामनगर", "कालाढूंगी", "लालकुआं"],
-  
+
     // ==================== HIMACHAL PRADESH ====================
     "शिमला (Shimla)": ["शिमला ग्रामीण", "शिमला शहर", "कसुम्पटी", "ठियोग", "चौपाल", "रोहड़ू", "जुब्बल-कोटखाई", "रामपुर"],
     "मंडी (Mandi)": ["मंडी", "बल्ह", "सरकाघाट", "बज्जू", "धरमपुर", "जोगिंद्रनगर", "करसोग", "सुंदरनगर"],
     "कांगड़ा (Kangra)": ["धर्मशाला", "शाहपुर", "नगरोटा सुरियां", "इंदौरा", "ज्वालामुखी", "डेहरा", "फतेहपुर", "जयसिंहपुर"],
-  
+
     // ==================== KERALA ====================
     "तिरुवनंतपुरम (Thiruvananthapuram)": ["तिरुवनंतपुरम", "वट्टियूरकावु", "कज्जाकूट्टम", "नेमोम", "अरुविक्कारा", "पारशाला", "चिरायिंकीझु", "अट्टिंगल"],
     "एर्नाकुलम (Ernakulam)": ["कोच्चि", "कलामसेरी", "परवुर", "विपिन", "अंगमाली", "अलुवा", "पेरुम्बावूर", "पिरावोम", "मूवात्तुपुझा"],
     "कोझिकोड (Kozhikode)": ["कोझिकोड उत्तर", "कोझिकोड दक्षिण", "बालुश्शेरी", "कुत्तियादी", "कुंडमंगलम", "कोडुवल्ली", "पेराम्बरा"],
-  
+
     // ==================== TAMIL NADU ====================
     "चेन्नई (Chennai)": ["चेन्नई मध्य", "चेन्नई उत्तर", "चेन्नई दक्षिण", "विल्लिवक्कम", "वेपेरी", "तोंडियरपेट्टई", "पुरासवल्कम", "एग्मोर", "नुंगमबक्कम", "साउथ चेन्नई"],
     "कोयंबटूर (Coimbatore)": ["कोयंबटूर उत्तर", "कोयंबटूर दक्षिण", "कोयंबटूर पश्चिम", "किनाथुकड़ावु", "मेट्टुपालयम", "अवनाशी", "सुलूर", "थोंडामुथूर"],
     "मदुरै (Madurai)": ["मदुरै पूर्व", "मदुरै पश्चिम", "मदुरै उत्तर", "मदुरै दक्षिण", "मदुरै मध्य", "थिरुपरनकुंड्रम्", "उसिलमपट्टी"],
-  
+
     // ==================== KARNATAKA ====================
     "बेंगलुरु शहरी (Bengaluru Urban)": ["बेंगलुरु मध्य", "बेंगलुरु उत्तर", "बेंगलुरु दक्षिण", "चिकपेट", "शिवाजीनगर", "गांधीनगर", "राजाजीनगर", "विजयनगर", "जयनगर", "बसंतनगर", "आर टी नगर", "हेवीफैक्टरी"],
     "मैसूर (Mysuru)": ["मैसूर", "चामुंडेश्वरी", "कृष्णराजा", "नरसिंहराजा", "चामराजा", "हुन्सूर", "तीर्थहल्ली", "कोवेगल"],
     "बेलगावी (Belagavi)": ["बेलगावी उत्तर", "बेलगावी दक्षिण", "बेलगावी ग्रामीण", "रामदुर्ग", "बैलहोंगल", "चिक्कोडी", "सड्डलगा", "मुदलगी"],
-  
+
     // ==================== ANDHRA PRADESH ====================
     "विशाखापट्टनम (Visakhapatnam)": ["विशाखापट्टनम पूर्व", "विशाखापट्टनम पश्चिम", "विशाखापट्टनम उत्तर", "विशाखापट्टनम दक्षिण", "भीमुनिपट्टनम", "गजुवाका", "पेंडुर्ति", "अनकापल्ली"],
     "कृष्णा (Krishna)": ["विजयवाड़ा पूर्व", "विजयवाड़ा पश्चिम", "विजयवाड़ा मध्य", "गन्नवरम", "नंदीगामा", "तिरुवूरु", "मचिलीपट्टनम"],
     "गुंटूर (Guntur)": ["गुंटूर पूर्व", "गुंटूर पश्चिम", "गुंटूर उत्तर", "गुंटूर दक्षिण", "मंगलगिरि", "तेनाली", "पोन्नूरु"],
-  
+
     // ==================== TELANGANA ====================
     "हैदराबाद (Hyderabad)": ["हैदराबाद", "सेकंदराबाद छावनी", "खैरताबाद", "नामपल्ली", "चारमीनार", "गोशामहल", "बहादुरपुरा", "याकूतपुरा", "मलकपेट", "कारवान", "जुबली हिल्स", "संजीवैया नगर"],
     "वारंगल शहरी (Warangal Urban)": ["वारंगल पूर्व", "वारंगल पश्चिम", "वारंगल उत्तर", "वारंगल दक्षिण", "हनामकोंडा", "धर्मसागर", "पारकाल"],
     "करीमनगर (Karimnagar)": ["करीमनगर", "मानाकोंडूर", "श्रीरामपुर", "हुजूराबाद", "हुसनाबाद", "चोप्पादंडी"],
-  
+
     // ==================== ODISHA ====================
     "खोरधा (Khordha)": ["भुवनेश्वर मध्य", "भुवनेश्वर उत्तर", "भुवनेश्वर पूर्व", "जटनी", "खोरधा", "बेगुनिया", "बालीपट्टना"],
     "कटक (Cuttack)": ["कटक सदर", "कटक छावनी", "बारबिल", "चोवारवार", "बांकी", "आठगढ़", "बारंबा"],
     "पुरी (Puri)": ["पुरी", "ब्रह्मगिरि", "सतपाड़ा", "पिपिली", "निमापड़ा", "काकतपुर"],
-  
+
     // ==================== ASSAM ====================
     "कामरूप महानगर (Kamrup Metropolitan)": ["गुवाहाटी पूर्व", "गुवाहाटी पश्चिम", "पलाशबाड़ी", "जालुकबाड़ी", "दिसपुर", "बरखोला", "सोनापुर", "रानी"],
     "डिब्रूगढ़ (Dibrugarh)": ["डिब्रूगढ़", "चबुआ", "देहरिया", "नहरकटिया", "टिंगखांग", "मोरान"],
     "जोरहाट (Jorhat)": ["जोरहाट", "तेओक", "मरियानी", "तिताबर", "खुमताई", "धेमाजी"],
-  
+
     // ==================== WEST BENGAL ====================
     "कोलकाता (Kolkata)": ["कोलकाता उत्तर", "कोलकाता दक्षिण", "कोलकाता पूर्व", "कोलकाता पश्चिम", "बल्लीगंज", "बेहाला", "जादवपुर", "कसबा", "बैरकपुर"],
     "हावड़ा (Howrah)": ["हावड़ा मध्य", "हावड़ा उत्तर", "हावड़ा दक्षिण", "बाली", "बागनान", "शिबपुर", "उलुबेरिया", "खारदह"],
     "दक्षिण 24 परगना (South 24 Parganas)": ["डायमंड हार्बर", "फलटा", "जयनगर", "कैनिंग", "कुलतली", "गोसाबा", "मथुरापुर", "काकद्वीप"],
-  
+
     // ==================== GOA ====================
     "उत्तर गोवा (North Goa)": ["पणजी", "खपोरली", "पोरवोरिम", "सत्तारी", "बिचोलिम", "पेडनेम", "वालपोई", "पेरनेम"],
     "दक्षिण गोवा (South Goa)": ["मडगाँव", "कुर्चोरिम", "सालसेट", "मार्मगांव", "वास्को", "कैनाकोना", "पोंडा", "क्यूपेम"],
-  
+
     // ==================== JAMMU & KASHMIR ====================
     "श्रीनगर (Srinagar)": ["श्रीनगर", "गंदरबल", "सोनावारी", "ज़ादिबल", "खोनमोह",]
   };
 
 
- 
-useEffect(() => {
-  if (form.district && districtVidhansabhaMap[form.district]) {
-    setDistrictVidhansabhas(districtVidhansabhaMap[form.district]);
-    setSelectedVidhansabha("");
-  } else {
-    setDistrictVidhansabhas([]);
-  }
-}, [form.district]);
+
+  useEffect(() => {
+    if (form.district && districtVidhansabhaMap[form.district]) {
+      setDistrictVidhansabhas(districtVidhansabhaMap[form.district]);
+      setSelectedVidhansabha("");
+    } else {
+      setDistrictVidhansabhas([]);
+    }
+  }, [form.district]);
 
   const validateForm = () => {
     const newErrors: Record<string, string> = {};
 
-   
+
     if (!form.imageFile) {
       newErrors.imageFile = "प्रोफाइल फोटो अपलोड करना आवश्यक है";
     }
 
-   
+
     if (!form.memberName.trim()) newErrors.memberName = "यह क्षेत्र आवश्यक है";
     if (!form.fatherName.trim()) newErrors.fatherName = "यह क्षेत्र आवश्यक है";
     if (!form.residenceAddress.trim())
@@ -1596,9 +1594,9 @@ useEffect(() => {
     // }
 
     // Email optional - sirf filled ho tab validate
-if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
-  newErrors.email = validationRules.email.message;
-}
+    if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
+      newErrors.email = validationRules.email.message;
+    }
 
 
     // Optional fields (validate only if filled)
@@ -1675,7 +1673,7 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
       }
       return '';
     }
-    
+
     else if (fieldName === "pan") {
       if (value.trim()) {
         const panUpper = value.toUpperCase();
@@ -1706,9 +1704,9 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   // Check if field is valid (filled and no errors)
   const isFieldValid = (fieldName: string, value?: string): boolean => {
     const safeValue = value || "";
-  
+
     if (!safeValue.trim()) return false;
-  
+
     const error = validateField(fieldName, safeValue);
     return error === "";
   };
@@ -1893,14 +1891,14 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
 
   // const handleSubmit = async (e) => { 
   //   e.preventDefault();
-  
+
   //   if (!validateForm()) return;
-  
+
   //   setLoading(true);
-  
+
   //   try {
   //     const { data } = await Instance.post("/api/membership/create-order");
-  
+
   //     const options = {
   //       key: data.key,
   //       amount: data.order.amount,
@@ -1908,17 +1906,17 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   //       order_id: data.order.id,
   //       name: "OBC Mahasabha",
   //       description: "Membership Fee ₹251",
-  
+
   //       handler: async function (response) {
   //         try {
   //           const verifyRes = await Instance.post("/api/membership/verify-payment", {
   //             razorpay_order_id: response.razorpay_order_id,
   //             razorpay_payment_id: response.razorpay_payment_id,
   //             razorpay_signature: response.razorpay_signature,
-              
+
   //           });
-  
-           
+
+
   //           const formDataToSend = new FormData();
   //           formDataToSend.append("memberName", form.memberName);
   //           formDataToSend.append("fatherName", form.fatherName);
@@ -1948,14 +1946,14 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   //           formDataToSend.append("membershipFee", "251");
   //           formDataToSend.append("razorpay_payment_id", response.razorpay_payment_id);
   //           formDataToSend.append("razorpay_order_id", response.razorpay_order_id);
-  
-          
+
+
   //           if (form.imageFile) {
   //             formDataToSend.append("imageFile", form.imageFile);
   //           }
-  
+
   //           console.log("📤 Sending registration data to backend...");
-  
+
   //           const registerRes = await Instance.post(
   //             "/api/membership/register",
   //             formDataToSend,
@@ -1966,17 +1964,17 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   //               timeout: 30000,
   //             }
   //           );
-  
+
   //           const memberId = registerRes?.data?.memberId;
-  
+
   //           if (!memberId) {
   //             throw new Error("Member ID not received");
   //           }
-  
+
   //           const previewImage =
   //             imagePreview ||
   //             (form.imageFile ? URL.createObjectURL(form.imageFile) : "");
-  
+
   //           const userDataForCard: UserCardData = {
   //             name: form.memberName,
   //             father: form.fatherName,
@@ -1986,7 +1984,7 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   //           };
 
   //           handleSuccessfulRegistration(memberId, userDataForCard);
-  
+
   //           // Reset form
   //           setForm({
   //             memberName: "",
@@ -2015,20 +2013,20 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   //             otherEducation: "",
   //             imageFile: undefined,
   //           });
-  
+
   //           setSelectedVidhansabha("");
   //           setImagePreview("");
   //           setErrors({});
-  
+
   //           const imageInput = document.getElementById("imageInput");
   //           if (imageInput instanceof HTMLInputElement) imageInput.value = "";
-  
+
   //         } catch (error) {
   //           console.error("❌ Error:", error);
   //           alert(`Payment verification failed: ${error.response?.data?.error || error.message}`);
   //         }
   //       },
-  
+
   //       modal: {
   //         ondismiss: function () {
   //           console.log("❌ Payment cancelled by user");
@@ -2036,12 +2034,12 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   //         },
   //       },
   //     };
-  
+
   //     if (!window.Razorpay) {
   //       alert("Razorpay SDK failed to load.");
   //       return;
   //     }
-  
+
   //     const rzp = new window.Razorpay(options);
   //     rzp.open();
   //   } catch (error) {
@@ -2051,19 +2049,19 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   //     setLoading(false);
   //   }
   // };
-  
+
   const handleSubmit = async (e) => {
     e.preventDefault();
-    
+
     if (!validateForm()) return;
-    
+
     setLoading(true);
-    
+
     try {
       const { data } = await Instance.post("/api/membership/create-order");
-      
+
       setLoading(false);
-      
+
       const options = {
         key: data.key,
         amount: data.order.amount,
@@ -2071,14 +2069,14 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
         order_id: data.order.id,
         name: "OBC Mahasabha",
         description: "Membership Fee ₹251",
-        
+
         modal: {
-          ondismiss: function() {
+          ondismiss: function () {
             setLoading(false);
             alert("Payment cancelled");
           },
         },
-        
+
         handler: async function (response) {
           try {
             // ✅ Step 1: Verify payment
@@ -2087,11 +2085,11 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
               razorpay_payment_id: response.razorpay_payment_id,
               razorpay_signature: response.razorpay_signature,
             });
-            
+
             if (verifyRes.data.success) {
               // ✅ Step 2: Show saving loading
               setSavingData(true);  // 🔥 YE IMPORTANT HAI
-              
+
               // ✅ Step 3: Save membership data
               const formDataToSend = new FormData();
               formDataToSend.append("memberName", form.memberName);
@@ -2122,11 +2120,11 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
               formDataToSend.append("membershipFee", "251");
               formDataToSend.append("razorpay_payment_id", response.razorpay_payment_id);
               formDataToSend.append("razorpay_order_id", response.razorpay_order_id);
-              
+
               if (form.imageFile) {
                 formDataToSend.append("imageFile", form.imageFile);
               }
-              
+
               const registerRes = await Instance.post(
                 "/api/membership/register",
                 formDataToSend,
@@ -2135,13 +2133,13 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
                   timeout: 30000,
                 }
               );
-              
+
               // ✅ Step 4: Saving complete
               setSavingData(false);
-              
+
               const memberId = registerRes?.data?.memberId;
               if (!memberId) throw new Error("Member ID not received");
-              
+
               const userDataForCard: UserCardData = {
                 name: form.memberName,
                 father: form.fatherName,
@@ -2149,10 +2147,10 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
                 receipt: memberId,
                 image: imagePreview,
               };
-              
+
               // ✅ Step 5: Show success and ID card
               handleSuccessfulRegistration(memberId, userDataForCard);
-              
+
               // Reset form
               setForm({
                 memberName: "",
@@ -2181,11 +2179,11 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
                 otherEducation: "",
                 imageFile: undefined,
               });
-              
+
               setSelectedVidhansabha("");
               setImagePreview("");
               setErrors({});
-              
+
             } else {
               alert("Payment verification failed!");
             }
@@ -2196,16 +2194,16 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
           }
         }
       };
-      
+
       if (!window.Razorpay) {
         alert("Razorpay SDK failed to load.");
         setLoading(false);
         return;
       }
-      
+
       const rzp = new window.Razorpay(options);
       rzp.open();
-      
+
     } catch (error) {
       console.error("❌ Razorpay Error:", error);
       alert("Payment initialization failed: " + error.message);
@@ -2217,37 +2215,37 @@ if (form.email.trim() && !validationRules.email.regex.test(form.email)) {
   const formatReceiptNumber = (num) => {
     // नंबर को स्ट्रिंग में बदलें
     const numStr = String(num);
-    
+
     // अगर 4 digits से छोटा है तो पैड करें
     if (numStr.length < 4) {
       return numStr.padStart(4, "0");
     }
-    
+
     // अगर 4 या उससे ज्यादा digits है तो वैसा ही रखें
     return numStr;
   };
-  
+
 
 
   // Add this component before your return statement
-const LoadingOverlay = ({ message }) => (
-  <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
-    <div className="bg-white rounded-xl p-8 text-center min-w-[320px] shadow-2xl">
-      <div className="w-16 h-16 border-4 border-[#e87722] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
-      <p className="text-[#0f1d3a] font-bold text-lg mb-2">{message}</p>
-      <p className="text-gray-500 text-sm">कृपया प्रतीक्षा करें...</p>
+  const LoadingOverlay = ({ message }) => (
+    <div className="fixed inset-0 bg-black bg-opacity-70 flex items-center justify-center z-50">
+      <div className="bg-white rounded-xl p-8 text-center min-w-[320px] shadow-2xl">
+        <div className="w-16 h-16 border-4 border-[#e87722] border-t-transparent rounded-full animate-spin mx-auto mb-4"></div>
+        <p className="text-[#0f1d3a] font-bold text-lg mb-2">{message}</p>
+        <p className="text-gray-500 text-sm">कृपया प्रतीक्षा करें...</p>
+      </div>
     </div>
-  </div>
-);
+  );
 
 
   return (
     <div className="font-sans bg-[#f5f0ea] min-h-screen">
 
-{savingData && (
-      <LoadingOverlay message="आपका पंजीकरण सहेजा जा रहा है..." />
-    )}
-      
+      {savingData && (
+        <LoadingOverlay message="आपका पंजीकरण सहेजा जा रहा है..." />
+      )}
+
       {/* ── Hero ── */}
       <div className="bg-gradient-to-tr from-[#0f1d3a] via-[#1e3160] to-[#162448] py-6 px-4 text-center relative overflow-hidden ">
         <div className="absolute -top-16 -right-16 w-60 h-60 rounded-full bg-[#f4a92a] opacity-10 pointer-events-none" />
@@ -2337,315 +2335,313 @@ const LoadingOverlay = ({ message }) => (
                 </button>
               </div>
             )}
-{showLoading && (
-  <div className="py-8">
-    <div className="flex flex-col items-center justify-center">
-      <div className="loader mb-4"></div>
-      <p className="text-gray-600 font-semibold">
-        आपका आईडी कार्ड तैयार किया जा रहा है...
-      </p>
-    </div>
+            {showLoading && (
+              <div className="py-8">
+                <div className="flex flex-col items-center justify-center">
+                  <div className="loader mb-4"></div>
+                  <p className="text-gray-600 font-semibold">
+                    आपका आईडी कार्ड तैयार किया जा रहा है...
+                  </p>
+                </div>
 
-    <button
-      disabled
-      className="bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold mt-6 cursor-not-allowed"
-    >
-      नया पंजीकरण करें
-    </button>
-  </div>
-)}
-
-{showIdCard && userData && (
-  <div className="flex flex-col items-center mt-8 w-full max-w-4xl mx-auto">
-    
-    {/* ID Card Container */}
-    <div className="w-full flex justify-center mb-8">
-      <div
-        id="id-card-capture"
-        ref={cardRef}
-        className="relative w-[320px] bg-white flex flex-col overflow-hidden"
-        style={{ borderRadius: "12px", boxShadow: "0 6px 32px rgba(0,0,0,0.15)", border: "1px solid #e5e7eb" }}
-      >
-        {/* FULL CARD WATERMARK BACKGROUND */}
-        <div
-          className="absolute inset-0 pointer-events-none z-0"
-          style={{
-            backgroundImage: `url(${backimg})`,
-            backgroundSize: "65%",
-            backgroundPosition: "center",
-            backgroundRepeat: "no-repeat",
-            opacity: 0.06,
-          }}
-        />
- 
-        {/* HEADER with wave bottom */}
-        <div className="relative z-10 w-full" style={{ background: "#f97316" }}>
-          <div className="px-4 pt-3 pb-7 text-center">
-            <p className="text-white font-extrabold text-[15px] m-0 leading-snug tracking-wide drop-shadow-sm">
-              अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
-            </p>
-          </div>
- 
-          <div className="absolute bottom-0 left-0 right-0" style={{ lineHeight: 0 }}>
-            <svg
-              viewBox="0 0 320 28"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full"
-              style={{ display: "block", height: "28px" }}
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M0,14 C53,28 107,0 160,14 C213,28 267,0 320,14 L320,28 L0,28 Z"
-                fill="#ffffff"
-              />
-            </svg>
-          </div>
-        </div>
- 
-        {/* BODY */}
-        <div className="relative z-10 flex flex-col items-center px-6 pt-2 pb-4 bg-white">
-          <img
-            src={backimg}
-            alt="logo"
-            className="w-[58px] h-[58px] object-contain mb-3"
-          />
- 
-          <div className="border-2 border-red-500 mb-3" style={{ borderRadius: "4px", padding: "2px" }}>
-            <img
-              src={userData.image}
-              alt="Member"
-              className="w-[100px] h-[110px] object-cover block"
-              style={{ borderRadius: "2px" }}
-            />
-          </div>
- 
-          <p
-            className="text-blue-700 font-extrabold text-[17px] text-center m-0 mb-0.5"
-            style={{ fontFamily: "'Noto Sans Devanagari','Mangal',sans-serif" }}
-          >
-            {userData.name}
-          </p>
- 
-          <p className="text-gray-500 text-[13px] text-center m-0 mb-4">
-            (जिला अध्यक्ष)
-          </p>
- 
-          <div className="w-full h-px bg-orange-100 mb-3" />
- 
-          <div className="w-full flex flex-col gap-[7px] px-1">
-            {[
-              { label: "ID No", value: userData.receipt },
-              { label: "पिता नाम", value: userData.father },
-              { label: "मोबाइल नं", value: userData.mobile },
-            ].map(({ label, value }) => (
-              <div key={label} className="flex items-start text-[13px]">
-                <span className="text-gray-800 font-semibold w-[90px] shrink-0">{label}</span>
-                <span className="text-gray-600 mr-2 font-medium">:</span>
-                <span className="text-gray-700">{value}</span>
+                <button
+                  disabled
+                  className="bg-gray-400 text-white px-6 py-3 rounded-lg font-semibold mt-6 cursor-not-allowed"
+                >
+                  नया पंजीकरण करें
+                </button>
               </div>
-            ))}
+            )}
+
+            {showIdCard && userData && (
+              <div className="flex flex-col items-center mt-8 w-full max-w-4xl mx-auto">
+
+                {/* ID Card Container */}
+                <div className="w-full flex justify-center mb-8">
+                  <div
+                    id="id-card-capture"
+                    ref={cardRef}
+                    className="relative w-[320px] bg-white flex flex-col overflow-hidden"
+                    style={{ borderRadius: "12px", boxShadow: "0 6px 32px rgba(0,0,0,0.15)", border: "1px solid #e5e7eb" }}
+                  >
+                    {/* FULL CARD WATERMARK BACKGROUND */}
+                    <div
+                      className="absolute inset-0 pointer-events-none z-0"
+                      style={{
+                        backgroundImage: `url(${backimg})`,
+                        backgroundSize: "65%",
+                        backgroundPosition: "center",
+                        backgroundRepeat: "no-repeat",
+                        opacity: 0.06,
+                      }}
+                    />
+
+                    {/* HEADER with wave bottom */}
+                    <div className="relative z-10 w-full" style={{ background: "#f97316" }}>
+                      <div className="px-4 pt-3 pb-7 text-center">
+                        <p className="text-white font-extrabold text-[12px] m-0 leading-snug tracking-wide drop-shadow-sm">
+                          अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
+                        </p>
+                        <p className="text-white text-[10px]">115, 116, विनायक रेजीडेंसी - I(F3),
+                          विनायक विहार डी, हरनाथपुरा, कलवार रोड, जयपुर - 302012</p>
+                      </div>
+
+                      <div className="absolute bottom-0 left-0 right-0" style={{ lineHeight: 0 }}>
+                        <svg
+                          viewBox="0 0 320 28"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-full"
+                          style={{ display: "block", height: "28px" }}
+                          preserveAspectRatio="none"
+                        >
+                          <path
+                            d="M0,14 C53,28 107,0 160,14 C213,28 267,0 320,14 L320,28 L0,28 Z"
+                            fill="#ffffff"
+                          />
+                        </svg>
+                      </div>
+                    </div>
+
+                    {/* BODY */}
+                    <div className="relative z-10 flex flex-col items-center px-6 pt-2 pb-4 bg-white">
+                      <img
+                        src={backimg}
+                        alt="logo"
+                        className="w-[58px] h-[58px] object-contain mb-3"
+                      />
+
+                      <div className="border-2 border-red-500 mb-3" style={{ borderRadius: "4px", padding: "2px" }}>
+                        <img
+                          src={userData.image}
+                          alt="Member"
+                          className="w-[100px] h-[110px] object-cover block"
+                          style={{ borderRadius: "2px" }}
+                        />
+                      </div>
+
+                      <p
+                        className="text-blue-700 font-extrabold text-[17px] text-center m-0 mb-0.5"
+                        style={{ fontFamily: "'Noto Sans Devanagari','Mangal',sans-serif" }}
+                      >
+                        {userData.name}
+                      </p>
+
+                      <div className="w-full h-px bg-orange-100 mb-3" />
+
+                      <div className="w-full flex flex-col gap-[7px] px-1">
+                        {[
+                          { label: "ID No", value: userData.receipt },
+                          { label: "पिता नाम", value: userData.father },
+                          { label: "मोबाइल नं", value: userData.mobile },
+                        ].map(({ label, value }) => (
+                          <div key={label} className="flex items-start text-[13px]">
+                            <span className="text-gray-800 font-semibold w-[90px] shrink-0">{label}</span>
+                            <span className="text-gray-600 mr-2 font-medium">:</span>
+                            <span className="text-gray-700">{value}</span>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+
+                    {/* FOOTER with wave top */}
+                    <div className="relative z-10 w-full" style={{ background: "#f97316" }}>
+                      <div className="w-full" style={{ lineHeight: 0 }}>
+                        <svg
+                          viewBox="0 0 320 28"
+                          xmlns="http://www.w3.org/2000/svg"
+                          className="w-full"
+                          style={{ display: "block", height: "28px" }}
+                          preserveAspectRatio="none"
+                        >
+                          <path
+                            d="M0,14 C53,0 107,28 160,14 C213,0 267,28 320,14 L320,0 L0,0 Z"
+                            fill="#ffffff"
+                          />
+                        </svg>
+                      </div>
+
+                      <div className="px-3 pb-3 text-center">
+                        <p className="text-white font-bold text-[13px] m-0 tracking-wide">
+                          Help Line No.: 9549566300
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Action Buttons */}
+                <div className="flex gap-4 mb-8">
+                  <button
+                    type="button"
+                    onClick={downloadCard}
+                    className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md active:scale-95 transition-all duration-200 border-0 cursor-pointer"
+                  >
+                    ⬇️ Download ID Card PNG
+                  </button>
+
+                  <button
+                    onClick={() => {
+                      setShowIdCard(false);
+                      resetForm();
+                    }}
+                    className="bg-[#0f1d3a] text-white px-6 py-3 rounded-lg font-semibold"
+                    type="button"
+                  >
+                    नया पंजीकरण करें
+                  </button>
+                </div>
+
+                {/* Receipt Section - Ab ID card ke neeche */}
+                {showReceipt && receiptData && (
+                  <div className="w-full mt-8 border-t pt-8">
+                    <h3 className="text-2xl font-bold text-[#0f1d3a] text-center mb-6">
+                      भुगतान रसीद
+                    </h3>
+
+                    <div className="flex justify-center">
+                      <div
+                        id="receipt-capture"
+                        className="w-[700px] bg-[#f38cb4] p-5 border-2 border-black font-sans text-black"
+                      >
+
+                        {/* Header */}
+                        <table className="w-full table-fixed text-[12px] font-bold">
+                          <tbody>
+                            <tr>
+                              <td className="w-1/3 text-left align-top">
+                                Regd. No. 216/JAIPUR/2024 <br />
+                                PAN NO.: AAKTA5604N
+                              </td>
+
+                              <td className="w-1/3 text-center align-top text-[18px]">
+                                रसीद
+                              </td>
+
+                              <td className="w-1/3 text-right align-top">
+                                Mob.: 9549566300
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+
+                        {/* Title (CENTER ONLY) */}
+                        <div className="text-center mt-2">
+                          <h1 className="text-[24px] font-bold m-0">
+                            अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
+                          </h1>
+                          <p className="text-[12px] font-bold mt-1">
+                            पंजीकृत प्रधान कार्यालय : प्लॉट नं. 115-116, विनायक विहार-डी,<br />
+                            हरनाथपुरा, कालवाड़ रोड, जयपुर-302012
+                          </p>
+                        </div>
+
+                        {/* Receipt Row */}
+                        <table className="w-full table-fixed font-bold mt-2">
+                          <tbody>
+                            <tr>
+                              <td className="w-1/2 text-left">
+                                क्रमांक :
+                                <span className="text-red-500 text-[22px] ml-1">
+                                  {formatReceiptNumber(receiptData.receiptNumber)}
+                                </span>
+                              </td>
+
+                              <td className="w-1/2 text-right">
+                                दिनांक :{" "}
+                                {new Date(receiptData.createdAt).toLocaleDateString("en-IN")}
+                              </td>
+                            </tr>
+                          </tbody>
+                        </table>
+
+                        {/* 🔥 IMPORTANT FIX: TEXT LEFT */}
+                        <div className="leading-[2.2] font-bold text-[13px] mt-2 text-left">
+
+                          <div className="border-b border-dotted border-black py-1">
+                            श्रीमान्/श्रीमती/सुश्री :
+                            <span className="font-normal"> {receiptData.memberName}</span>
+                          </div>
+
+                          <div className="border-b border-dotted border-black py-1">
+                            पता :
+                            <span className="font-normal"> {receiptData.residenceAddress}</span>
+                            <span className="float-right">
+                              मो.: <span className="font-normal">{receiptData.mobile}</span>
+                            </span>
+                          </div>
+
+                          <div className="border-b border-dotted border-black py-1">
+                            सदस्यता प्रकार :
+                            <span className="font-normal">
+                              {receiptData.membershipType === "life"
+                                ? "आजीवन सदस्य"
+                                : "वार्षिक सदस्य"}
+                            </span>
+                          </div>
+
+                          <div className="border-b border-dotted border-black py-1">
+                            जिला :
+                            <span className="font-normal"> {receiptData.district}</span>
+                            &nbsp;&nbsp; विधानसभा :
+                            <span className="font-normal"> {receiptData.vidhansabha}</span>
+
+                            <span className="float-right">
+                              राज्य :
+                              <span className="font-normal"> {receiptData.state}</span>
+                            </span>
+                          </div>
+
+                          <div className="border-b border-dotted border-black py-1">
+                            से रुपये (शब्दों में) :
+                            <span className="font-normal">
+                              {numberToHindiWords(receiptData.membershipFee)}
+                            </span>
+                          </div>
+
+                          <div className="border-b border-dotted border-black py-1">
+                            नकद/बैंक/ऑनलाइन सधन्यवाद प्राप्त किये।
+                            <span className="float-right">
+                              PAN :
+                              <span className="border border-black px-2 py-[2px] font-mono tracking-[3px] font-normal">
+                                {receiptData.pan || "---------"}
+                              </span>
+                            </span>
+                          </div>
+
+                        </div>
+
+                        {/* Amount */}
+                        <div className="mt-4">
+                          <div className="w-[200px] border-2 border-black p-2 text-center">
+                            <span className="text-[35px] font-bold">
+                              ₹ {receiptData.membershipFee}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+
+                    {/* Buttons */}
+                    <div className="flex gap-3 mt-6 justify-center">
+                      <button
+                        onClick={() => downloadReceipt()}
+                        className="bg-[#e87722] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#d66a1a] transition"
+                      >
+                        ⬇️ रसीद डाउनलोड करें
+                      </button>
+
+                      <button
+                        onClick={() => setShowReceipt(false)}
+                        className="border-2 border-[#e87722] text-[#e87722] px-6 py-2 rounded-lg font-semibold hover:bg-[#e87722] hover:text-white transition"
+                      >
+                        बंद करें
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
           </div>
-        </div>
- 
-        {/* FOOTER with wave top */}
-        <div className="relative z-10 w-full" style={{ background: "#f97316" }}>
-          <div className="w-full" style={{ lineHeight: 0 }}>
-            <svg
-              viewBox="0 0 320 28"
-              xmlns="http://www.w3.org/2000/svg"
-              className="w-full"
-              style={{ display: "block", height: "28px" }}
-              preserveAspectRatio="none"
-            >
-              <path
-                d="M0,14 C53,0 107,28 160,14 C213,0 267,28 320,14 L320,0 L0,0 Z"
-                fill="#ffffff"
-              />
-            </svg>
-          </div>
- 
-          <div className="px-3 pb-3 text-center">
-            <p className="text-white font-bold text-[13px] m-0 tracking-wide">
-              Help Line No.: 09549560000
-            </p>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* Action Buttons */}
-    <div className="flex gap-4 mb-8">
-      <button
-        type="button"
-        onClick={downloadCard}
-        className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg bg-orange-500 hover:bg-orange-600 text-white font-bold text-sm shadow-md active:scale-95 transition-all duration-200 border-0 cursor-pointer"
-      >
-        ⬇️ Download ID Card PNG
-      </button>
-      
-      <button
-        onClick={() => {
-          setShowIdCard(false);
-          resetForm();
-        }}
-        className="bg-[#0f1d3a] text-white px-6 py-3 rounded-lg font-semibold"
-        type="button"
-      >
-        नया पंजीकरण करें
-      </button>
-    </div>
-
-    {/* Receipt Section - Ab ID card ke neeche */}
-    {showReceipt && receiptData && (
-  <div className="w-full mt-8 border-t pt-8">
-    <h3 className="text-2xl font-bold text-[#0f1d3a] text-center mb-6">
-      भुगतान रसीद
-    </h3>
-
-    <div className="flex justify-center">
-      <div
-        id="receipt-capture"
-        className="w-[700px] bg-[#f38cb4] p-5 border-2 border-black font-sans text-black"
-      >
-
-        {/* Header */}
-        <table className="w-full table-fixed text-[12px] font-bold">
-          <tbody>
-            <tr>
-              <td className="w-1/3 text-left align-top">
-                Regd. No. 216/JAIPUR/2024 <br />
-                PAN NO.: AAKTA5604N
-              </td>
-
-              <td className="w-1/3 text-center align-top text-[18px]">
-                रसीद
-              </td>
-
-              <td className="w-1/3 text-right align-top">
-                Mob.: 9549566300
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        {/* Title (CENTER ONLY) */}
-        <div className="text-center mt-2">
-          <h1 className="text-[24px] font-bold m-0">
-            अखिल भारतीय संयुक्त ओ.बी.सी. महासभा
-          </h1>
-          <p className="text-[12px] font-bold mt-1">
-            पंजीकृत प्रधान कार्यालय : प्लॉट नं. 115-116, विनायक विहार-डी,<br />
-            हरनाथपुरा, कालवाड़ रोड, जयपुर-302012
-          </p>
-        </div>
-
-        {/* Receipt Row */}
-        <table className="w-full table-fixed font-bold mt-2">
-          <tbody>
-            <tr>
-              <td className="w-1/2 text-left">
-                क्रमांक :
-                <span className="text-red-500 text-[22px] ml-1">
-                {formatReceiptNumber(receiptData.receiptNumber)}
-                </span>
-              </td>
-
-              <td className="w-1/2 text-right">
-                दिनांक :{" "}
-                {new Date(receiptData.createdAt).toLocaleDateString("en-IN")}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-
-        {/* 🔥 IMPORTANT FIX: TEXT LEFT */}
-        <div className="leading-[2.2] font-bold text-[13px] mt-2 text-left">
-
-          <div className="border-b border-dotted border-black py-1">
-            श्रीमान्/श्रीमती/सुश्री :
-            <span className="font-normal"> {receiptData.memberName}</span>
-          </div>
-
-          <div className="border-b border-dotted border-black py-1">
-            पता :
-            <span className="font-normal"> {receiptData.residenceAddress}</span>
-            <span className="float-right">
-              मो.: <span className="font-normal">{receiptData.mobile}</span>
-            </span>
-          </div>
-
-          <div className="border-b border-dotted border-black py-1">
-            सदस्यता प्रकार :
-            <span className="font-normal">
-              {receiptData.membershipType === "life"
-                ? "आजीवन सदस्य"
-                : "वार्षिक सदस्य"}
-            </span>
-          </div>
-
-          <div className="border-b border-dotted border-black py-1">
-            जिला :
-            <span className="font-normal"> {receiptData.district}</span>
-            &nbsp;&nbsp; विधानसभा :
-            <span className="font-normal"> {receiptData.vidhansabha}</span>
-
-            <span className="float-right">
-              राज्य :
-              <span className="font-normal"> {receiptData.state}</span>
-            </span>
-          </div>
-
-          <div className="border-b border-dotted border-black py-1">
-            से रुपये (शब्दों में) :
-            <span className="font-normal">
-              {numberToHindiWords(receiptData.membershipFee)}
-            </span>
-          </div>
-
-          <div className="border-b border-dotted border-black py-1">
-            नकद/बैंक/ऑनलाइन सधन्यवाद प्राप्त किये।
-            <span className="float-right">
-              PAN :
-              <span className="border border-black px-2 py-[2px] font-mono tracking-[3px] font-normal">
-                {receiptData.pan || "---------"}
-              </span>
-            </span>
-          </div>
-
-        </div>
-
-        {/* Amount */}
-        <div className="mt-4">
-          <div className="w-[200px] border-2 border-black p-2 text-center">
-            <span className="text-[35px] font-bold">
-              ₹ {receiptData.membershipFee}
-            </span>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    {/* Buttons */}
-    <div className="flex gap-3 mt-6 justify-center">
-      <button
-        onClick={() => downloadReceipt()}
-        className="bg-[#e87722] text-white px-6 py-2 rounded-lg font-semibold hover:bg-[#d66a1a] transition"
-      >
-        ⬇️ रसीद डाउनलोड करें
-      </button>
-
-      <button
-        onClick={() => setShowReceipt(false)}
-        className="border-2 border-[#e87722] text-[#e87722] px-6 py-2 rounded-lg font-semibold hover:bg-[#e87722] hover:text-white transition"
-      >
-        बंद करें
-      </button>
-    </div>
-  </div>
-)}
-  </div>
-)}
- </div>
 
 
 
@@ -2662,11 +2658,10 @@ const LoadingOverlay = ({ message }) => (
                   onDragOver={handleDragOver}
                   onDragLeave={handleDragLeave}
                   onDrop={handleDrop}
-                  className={`relative border-2 border-dashed rounded-xl p-8 transition-all ${
-                    errors.imageFile
+                  className={`relative border-2 border-dashed rounded-xl p-8 transition-all ${errors.imageFile
                       ? "border-red-300 bg-red-50"
                       : "border-gray-300 bg-gray-50 hover:border-[#e87722] hover:bg-[#fff7f0]"
-                  }`}
+                    }`}
                 >
                   <input
                     id="imageInput"
@@ -3074,11 +3069,10 @@ const LoadingOverlay = ({ message }) => (
                     onBlur={handleBlur}
                     required
                     placeholder="अपनी योग्यता लिखें"
-                    className={`w-full border rounded-lg px-4 py-2 text-sm bg-white mt-3 focus:outline-none focus:ring-4 transition ${
-                      errors.otherEducation
+                    className={`w-full border rounded-lg px-4 py-2 text-sm bg-white mt-3 focus:outline-none focus:ring-4 transition ${errors.otherEducation
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
                         : "border-gray-200 focus:border-[#e87722] focus:ring-[#e87722]/20"
-                    }`}
+                      }`}
                   />
                 )}
                 <ErrorText message={errors.education} />
@@ -3100,11 +3094,10 @@ const LoadingOverlay = ({ message }) => (
                     onBlur={handleBlur}
                     max={today} // ✅ future date disabled
                     required
-                    className={`w-full border rounded-lg px-4 py-2 text-sm bg-white focus:outline-none focus:ring-4 transition ${
-                      errors.dob
+                    className={`w-full border rounded-lg px-4 py-2 text-sm bg-white focus:outline-none focus:ring-4 transition ${errors.dob
                         ? "border-red-500 focus:border-red-500 focus:ring-red-500/20"
                         : "border-gray-200 focus:border-[#e87722] focus:ring-[#e87722]/20"
-                    }`}
+                      }`}
                   />
 
                   <ErrorText message={errors.dob} />
@@ -3233,14 +3226,13 @@ const LoadingOverlay = ({ message }) => (
 
               {/* Submit Buttons */}
               <div className="flex gap-3 flex-wrap">
-              <button
+                <button
                   type="submit"
                   disabled={!isFormValid() || loading}
-                  className={`w-full py-3 px-6 rounded-lg font-semibold text-lg transition-all duration-200 ${
-                    isFormValid() && !submitted && !loading
+                  className={`w-full py-3 px-6 rounded-lg font-semibold text-lg transition-all duration-200 ${isFormValid() && !submitted && !loading
                       ? "bg-[#e87722] text-white hover:bg-[#d66a1a]"
                       : "bg-gray-400 text-gray-700 cursor-not-allowed"
-                  } ${submitted ? "bg-green-600 hover:bg-green-700" : ""}`}
+                    } ${submitted ? "bg-green-600 hover:bg-green-700" : ""}`}
                 >
                   {loading ? (
                     <span className="loader"></span>

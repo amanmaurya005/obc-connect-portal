@@ -9,6 +9,7 @@ const navItems = [
   { label: "हमारे बारे में", href: "/#about" },
   { label: "उद्देश्य", href: "/#objectives" },
   { label: "नेतृत्व", href: "/#leadership" },
+  { label: "टीम", href: "/team" },
   { label: "गैलरी", href: "/#gallery" },
   { label: "संपर्क", href: "/#contact" },
   { label: "डोनेशन", href: "/donations" },
@@ -20,8 +21,6 @@ const Header = () => {
 
   return (
     <header className="sticky top-0 z-50 bg-card/95 backdrop-blur-md shadow-md tricolor-border-top">
-
-      {/* Top marquee */}
       <div className="bg-gradient-saffron py-1 overflow-hidden">
         <div className="animate-marquee whitespace-nowrap text-primary-foreground text-sm font-medium">
           <span className="mx-8">एक बनो, नेक रहो</span>
@@ -38,11 +37,8 @@ const Header = () => {
         </div>
       </div>
 
-      {/* Main header */}
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between py-3">
-
-          {/* Logo */}
           <a href="/#home" className="flex items-center gap-3 shrink-0">
             <img
               src={logo}
@@ -51,7 +47,7 @@ const Header = () => {
             />
             <div className="hidden sm:block">
               <h1 className="text-base md:text-lg font-heading font-bold text-foreground leading-tight">
-                अखिल भारतीय सयुंक्त
+                अखिल भारतीय संयुक्त
               </h1>
               <p className="text-sm md:text-base font-heading font-bold text-primary leading-tight">
                 ओ.बी.सी. महासभा
@@ -59,9 +55,7 @@ const Header = () => {
             </div>
           </a>
 
-          {/* Desktop nav */}
           <nav className="hidden lg:flex items-center gap-1">
-
             {navItems.map((item) => (
               <a
                 key={item.href}
@@ -72,7 +66,6 @@ const Header = () => {
               </a>
             ))}
 
-            {/* Member button desktop */}
             <Link
               to="/member-form"
               className="ml-3 flex items-center gap-2 bg-gradient-saffron text-primary-foreground px-5 py-2.5 rounded-full text-sm font-semibold shadow-lg hover:shadow-xl transition-all hover:scale-105"
@@ -80,10 +73,8 @@ const Header = () => {
               <Users className="h-5 w-5" />
               सदस्य बनें
             </Link>
-
           </nav>
 
-          {/* Mobile toggle */}
           <button
             onClick={() => setMobileOpen(!mobileOpen)}
             className="lg:hidden p-2 text-foreground hover:text-primary"
@@ -94,11 +85,9 @@ const Header = () => {
               <Menu className="h-6 w-6" />
             )}
           </button>
-
         </div>
       </div>
 
-      {/* Mobile menu */}
       <AnimatePresence>
         {mobileOpen && (
           <motion.div
@@ -107,9 +96,7 @@ const Header = () => {
             exit={{ height: 0, opacity: 0 }}
             className="lg:hidden overflow-hidden bg-card border-t border-border"
           >
-
             <nav className="container mx-auto px-4 py-4 flex flex-col gap-1">
-
               {navItems.map((item) => (
                 <a
                   key={item.href}
@@ -121,7 +108,6 @@ const Header = () => {
                 </a>
               ))}
 
-              {/* Member button mobile */}
               <Link
                 to="/member-form"
                 onClick={() => setMobileOpen(false)}
@@ -131,22 +117,18 @@ const Header = () => {
                 सदस्य बनें
               </Link>
 
-              {/* Phone */}
               <a
-                href="tel:91+ 9549566300"
+                href="tel:91+9549566300"
                 className="mt-2 flex items-center justify-center gap-2 bg-gradient-saffron text-primary-foreground px-5 py-3 rounded-full text-sm font-semibold"
               >
                 <Phone className="h-4 w-4" />
-                91+ 9549566300
+                +91 9549566300
               </a>
-
             </nav>
-
           </motion.div>
         )}
       </AnimatePresence>
 
-      {/* Marquee animation */}
       <style>
         {`
         @keyframes marquee {
@@ -159,7 +141,6 @@ const Header = () => {
         }
         `}
       </style>
-
     </header>
   );
 };
