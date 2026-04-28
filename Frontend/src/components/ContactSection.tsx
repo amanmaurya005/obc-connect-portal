@@ -27,7 +27,7 @@ const ContactSection = () => {
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 max-w-5xl mx-auto">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
           {/* WhatsApp Card */}
           <motion.a
             href="https://wa.me/9191+ 9549566300"
@@ -36,7 +36,7 @@ const ContactSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.1 }}
-            className="group bg-card rounded-2xl p-8 border border-border hover:border-secondary/30 shadow-sm hover:shadow-xl transition-all duration-300 text-center"
+            className="group h-full bg-card rounded-2xl p-8 border border-border hover:border-secondary/30 shadow-sm hover:shadow-xl transition-all duration-300 text-center"
           >
             <div className="w-16 h-16 rounded-full bg-gradient-green flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
               <MessageCircle className="h-8 w-8 text-secondary-foreground" />
@@ -52,7 +52,7 @@ const ContactSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.2 }}
-            className="group bg-card rounded-2xl p-8 border border-border hover:border-primary/30 shadow-sm hover:shadow-xl transition-all duration-300 text-center"
+            className="group h-full bg-card rounded-2xl p-8 border border-border hover:border-primary/30 shadow-sm hover:shadow-xl transition-all duration-300 text-center"
           >
             <div className="w-16 h-16 rounded-full bg-gradient-saffron flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
               <Phone className="h-8 w-8 text-primary-foreground" />
@@ -67,7 +67,7 @@ const ContactSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.3 }}
-            className="group bg-card rounded-2xl p-8 border border-border shadow-sm text-center"
+            className="group h-full bg-card rounded-2xl p-8 border border-border shadow-sm text-center"
           >
             <div className="w-16 h-16 rounded-full bg-gradient-saffron flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
               <MapPin className="h-8 w-8 text-primary-foreground" />
@@ -89,20 +89,20 @@ const ContactSection = () => {
             initial={{ opacity: 0, y: 30 }}
             animate={isInView ? { opacity: 1, y: 0 } : {}}
             transition={{ duration: 0.5, delay: 0.4 }}
-            className="group bg-card rounded-2xl p-8 border border-border shadow-sm text-center"
+            className="group h-full bg-card rounded-2xl p-8 border border-border shadow-sm text-center"
           >
             <div className="w-16 h-16 rounded-full bg-gradient-saffron flex items-center justify-center mx-auto mb-5 group-hover:scale-110 transition-transform">
               <MapPin className="h-8 w-8 text-primary-foreground" />
             </div>
             <h3 className="text-xl font-heading font-bold text-foreground mb-2">कार्यालय</h3>
             <p className="text-muted-foreground leading-relaxed">
-            प्लॉट नंबर: 115, 116,
+            प्लॉट नंबर: 19, 20,
               <br />
-              विनायक रेजीडेंसी - I(F3), 
+             Ist फ्लोर, ग्रीन पार्क कॉलोनी
               <br />
-              विनायक विहार डी, हरनाथपुरा,
+               गोविन्दपुरा निवारू लिंक रोड़ गोविन्दपुरा,
               <br />
-              कलवार रोड, जयपुर - 302012
+              कालवाड़ रोड़, जयपुर-302012
             </p>          
           </motion.div>
         </div>

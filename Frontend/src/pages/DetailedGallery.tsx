@@ -1019,7 +1019,7 @@ export default function GallerySection() {
                     <div
                       style={{
                         position: "absolute",
-                        top: "calc(100% + 8px)",
+                        top: "100%",
                         left: "50%",
                         transform: "translateX(-50%)",
                         minWidth: "180px",
